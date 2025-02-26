@@ -62,20 +62,25 @@ export const generateGoblinPrompt = (goblin: Goblin): string => {
   
   const englishClass = classTranslation[classe] || 'Goblin Adventurer';
   
-  // Criar o prompt em inglês - versão simplificada com apenas características essenciais
-  const prompt = `RPG character sheet for goblin ${name}, a ${englishClass}. 
-${skinColor} skin, ${eyeColor} eyes. 
-Stats: Combat ${combate}, Skill ${habilidade}, Wits ${nocao}, Vitality ${vitalidade}. 
-Equipment: ${safeWeapon}.
-Art style: colorful cartoon character sheet, cute goblin illustration, fantasy RPG game.`;
+  // Criar o prompt em inglês - versão específica para ficha de personagem
+  const prompt = `Create a detailed RPG character sheet for a goblin named "${name}", a ${englishClass}. 
+The character sheet should have:
+- A large cartoon illustration of the goblin with ${skinColor} skin and ${eyeColor} eyes
+- The goblin's name "${name}" in a banner
+- Stats displayed clearly: Combat ${combate}, Skill ${habilidade}, Wits ${nocao}, Vitality ${vitalidade}
+- The goblin holding its equipment: ${safeWeapon}
+- Fantasy RPG style layout with decorative borders
+- Parchment background texture
+
+Art style: Colorful cartoon illustration, D&D-inspired character sheet, fantasy tabletop RPG game.`;
 
   // Verificar o comprimento do prompt
   if (prompt.length > 950) {
     console.warn(`Prompt muito longo (${prompt.length} caracteres). Reduzindo...`);
     // Versão ainda mais curta em inglês
-    return `RPG character sheet for goblin ${name}. 
-${skinColor} skin. Stats: C${combate}, S${habilidade}, W${nocao}, V${vitalidade}. 
-Art style: colorful cartoon character sheet, fantasy RPG game.`;
+    return `Create a RPG character sheet for goblin "${name}" with ${skinColor} skin. 
+Include stats (C${combate}, S${habilidade}, W${nocao}, V${vitalidade}) and a cartoon illustration of the goblin.
+Style: D&D character sheet with parchment background.`;
   }
   
   return prompt;
@@ -91,12 +96,8 @@ export const generateGoblinImage = async (goblin: Goblin, apiKey: string): Promi
       console.warn(`Prompt excede 1000 caracteres (${prompt.length}). Isso pode causar erros.`);
     }
     
-    // Adicionar um estilo simples e seguro
-    const safeStyle = ", cartoon style, fantasy character sheet";
-    const finalPrompt = prompt.length + safeStyle.length > 1000 ? prompt : prompt + safeStyle;
-    
-    console.log("Prompt final:", finalPrompt);
-    console.log("Tamanho do prompt:", finalPrompt.length);
+    console.log("Prompt final:", prompt);
+    console.log("Tamanho do prompt:", prompt.length);
     
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
@@ -105,11 +106,12 @@ export const generateGoblinImage = async (goblin: Goblin, apiKey: string): Promi
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        prompt: finalPrompt,
+        prompt: prompt,
         n: 1,
         size: '1024x1024',
         response_format: 'url',
-        quality: 'standard'
+        quality: 'standard',
+        model: 'dall-e-3'  // Especificar DALL-E 3, o mesmo usado pelo ChatGPT
       })
     });
     

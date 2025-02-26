@@ -42,6 +42,8 @@ Para utilizar a funcionalidade de geração de fichas de personagem, você preci
 
 **Nota**: A geração de imagens é um serviço pago. Verifique os preços atuais na [documentação da OpenAI](https://platform.openai.com/docs/guides/rate-limits).
 
+**Modelo DALL-E 3**: Esta aplicação utiliza o modelo DALL-E 3 da OpenAI para gerar fichas de personagem de alta qualidade, semelhantes às que você obteria no ChatGPT. Este modelo oferece resultados superiores, mas tem um custo mais elevado (aproximadamente $0.04 USD por imagem na resolução 1024x1024). Certifique-se de que sua conta OpenAI tenha créditos suficientes.
+
 ### Limitações da API
 
 A API da OpenAI possui algumas limitações que podem afetar a geração de imagens:
@@ -52,7 +54,7 @@ A API da OpenAI possui algumas limitações que podem afetar a geração de imag
 
 **Nota sobre idioma**: Para melhorar os resultados e reduzir erros, o aplicativo envia prompts em inglês para a API da OpenAI, mesmo que a interface do usuário esteja em português. Isso ocorre porque o modelo foi treinado principalmente com dados em inglês e tende a produzir resultados mais consistentes nesse idioma.
 
-**Simplificação de prompts**: Para evitar problemas com as políticas de conteúdo da OpenAI, os prompts foram simplificados para incluir apenas as características mais relevantes do goblin: nome, classe, cor da pele, olhos e equipamento principal. Isso ajuda a garantir que as imagens sejam geradas com sucesso.
+**Prompts específicos para fichas**: Para garantir que as imagens geradas sejam realmente fichas de personagem de RPG, utilizamos prompts estruturados que descrevem especificamente o layout desejado, incluindo a ilustração do goblin, seus atributos, nome e equipamento, além de elementos visuais como bordas decorativas e fundo de pergaminho. Isso resulta em fichas visualmente semelhantes às que você obteria no ChatGPT.
 
 Se você encontrar erros de violação de política de conteúdo, tente:
 1. Gerar um novo goblin com características diferentes

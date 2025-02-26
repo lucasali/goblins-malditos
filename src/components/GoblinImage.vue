@@ -32,14 +32,39 @@ const generateImage = async () => {
   }
   
   try {
+    // Mensagem de carregamento mais informativa
+    const loadingMessages = [
+      'Criando ficha do goblin...',
+      'Isso pode levar até 30 segundos...',
+      'O DALL-E 3 está desenhando sua ficha...',
+      'Quase lá...'
+    ];
+    
+    let messageIndex = 0;
+    const loadingInterval = setInterval(() => {
+      if (isLoading.value) {
+        const loadingElement = document.querySelector('.loading-message');
+        if (loadingElement) {
+          loadingElement.textContent = loadingMessages[messageIndex % loadingMessages.length];
+        }
+        messageIndex++;
+      } else {
+        clearInterval(loadingInterval);
+      }
+    }, 5000);
+    
     const result = await generateGoblinImage(props.goblin, props.apiKey);
+    
+    clearInterval(loadingInterval);
     
     if (result.error) {
       // Verificar se é um erro de violação de política de conteúdo
       if (result.error.includes('content_policy_violation') || 
           result.error.includes('safety system') || 
           result.error.includes('policy')) {
-        error.value = 'Erro na geração da imagem. Estamos usando um prompt simplificado em inglês para melhorar os resultados. Tente gerar outro goblin ou regenerar a imagem.';
+        error.value = 'Erro na geração da imagem. Estamos usando o DALL-E 3 com um prompt específico para fichas de personagem. Tente gerar outro goblin ou regenerar a imagem.';
+      } else if (result.error.includes('billing')) {
+        error.value = 'Erro de cobrança na API da OpenAI. Verifique se sua conta tem créditos suficientes para usar o DALL-E 3.';
       } else {
         error.value = result.error;
       }
@@ -106,7 +131,8 @@ watch(() => props.goblin, () => {
   <div class="goblin-image-container">
     <div v-if="isLoading" class="loading-container">
       <div class="loading-spinner"></div>
-      <p class="text-goblin-brown mt-2">Criando ficha do goblin...</p>
+      <p class="loading-message text-goblin-brown mt-2">Criando ficha do goblin...</p>
+      <p class="text-goblin-gray text-xs mt-1">Usando DALL-E 3 para resultados melhores</p>
     </div>
     
     <div v-else-if="imageUrl" class="image-container">
