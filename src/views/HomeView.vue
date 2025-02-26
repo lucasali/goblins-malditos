@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import GoblinCard from '../components/GoblinCard.vue';
 import GoblinImage from '../components/GoblinImage.vue';
 import type { Goblin } from '../services/goblinGenerator';
-import { generateGoblin } from '../services/goblinGenerator';
+import { generateGoblin, generateGoblinFromSeed } from '../services/goblinGenerator';
+
+// Obter a rota e o router para manipular a URL
+const route = useRoute();
+const router = useRouter();
 
 // Estado para armazenar o goblin atual
 const currentGoblin = ref<Goblin | null>(null);
@@ -12,7 +17,11 @@ const currentGoblin = ref<Goblin | null>(null);
 const apiKey = ref<string>('');
 const showApiConfig = ref<boolean>(false);
 
-// Inicializar a chave da API
+// Estado para mensagens de compartilhamento
+const shareMessage = ref<string>('');
+const showShareMessage = ref<boolean>(false);
+
+// Inicializar a chave da API e verificar se há uma seed na URL
 onMounted(() => {
   // Verificar se há uma chave de API no ambiente
   const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
@@ -28,7 +37,30 @@ onMounted(() => {
     // Salvar no localStorage para uso futuro
     localStorage.setItem('openai_api_key', envApiKey);
   }
+
+  // Verificar se há uma seed na URL
+  const seedFromUrl = route.query.seed as string;
+  if (seedFromUrl) {
+    loadGoblinFromSeed(seedFromUrl);
+  }
 });
+
+// Função para carregar um goblin a partir de uma seed
+const loadGoblinFromSeed = (seed: string) => {
+  try {
+    const goblin = generateGoblinFromSeed(seed);
+    if (goblin) {
+      currentGoblin.value = goblin;
+    } else {
+      // Se a seed for inválida, gerar um novo goblin
+      generateNewGoblin();
+    }
+  } catch (error) {
+    console.error('Erro ao carregar goblin da seed:', error);
+    // Em caso de erro, gerar um novo goblin
+    generateNewGoblin();
+  }
+};
 
 // Função para salvar a chave da API
 const saveApiKey = () => {
@@ -50,7 +82,38 @@ const generateNewGoblin = () => {
   // Gerar o goblin após um pequeno delay para a animação
   setTimeout(() => {
     currentGoblin.value = generateGoblin();
+    
+    // Atualizar a URL com a nova seed
+    if (currentGoblin.value && currentGoblin.value.seed) {
+      router.replace({ query: { seed: currentGoblin.value.seed } });
+    }
   }, 300);
+};
+
+// Função para compartilhar o goblin atual
+const shareGoblin = () => {
+  if (!currentGoblin.value || !currentGoblin.value.seed) return;
+  
+  // Criar a URL completa com a seed
+  const url = new URL(window.location.href);
+  url.searchParams.set('seed', currentGoblin.value.seed);
+  
+  // Copiar a URL para a área de transferência
+  navigator.clipboard.writeText(url.toString())
+    .then(() => {
+      shareMessage.value = 'Link copiado para a área de transferência!';
+      showShareMessage.value = true;
+      
+      // Esconder a mensagem após 3 segundos
+      setTimeout(() => {
+        showShareMessage.value = false;
+      }, 3000);
+    })
+    .catch(err => {
+      console.error('Erro ao copiar URL: ', err);
+      shareMessage.value = 'Erro ao copiar o link. Tente novamente.';
+      showShareMessage.value = true;
+    });
 };
 
 // Função para copiar o goblin para a área de transferência
@@ -116,6 +179,23 @@ ${goblin.luckOrCurse.description}
         >
           {{ apiKey ? 'Alterar API Key' : 'Configurar API Key' }}
         </button>
+        
+        <button 
+          v-if="currentGoblin" 
+          @click="shareGoblin" 
+          class="text-sm bg-goblin-brown hover:bg-goblin-green px-3 py-1 rounded"
+          title="Compartilhar este goblin"
+        >
+          Compartilhar Goblin
+        </button>
+      </div>
+      
+      <!-- Mensagem de compartilhamento -->
+      <div 
+        v-if="showShareMessage" 
+        class="share-message bg-goblin-green text-white px-4 py-2 rounded-lg mb-4 transition-opacity duration-300"
+      >
+        {{ shareMessage }}
       </div>
       
       <div v-if="showApiConfig" class="bg-goblin-dark p-4 rounded-lg border border-goblin-brown mb-4 max-w-md">
@@ -181,3 +261,16 @@ ${goblin.luckOrCurse.description}
     </footer>
   </div>
 </template> 
+
+<style scoped>
+/* Adicionar estilos para a mensagem de compartilhamento */
+.share-message {
+  animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+</style> 

@@ -177,7 +177,7 @@ const downloadImage = async () => {
         class="goblin-button"
         :disabled="isLoading"
       >
-        Gerar Ficha de Personagem
+        Gerar imagem com IA
       </button>
       
       <div v-if="error" class="error-message text-sm text-red-500 mt-4">
