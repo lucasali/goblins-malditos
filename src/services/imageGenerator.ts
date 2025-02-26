@@ -75,24 +75,20 @@ export const generateGoblinPrompt = (goblin: Goblin): string => {
   
   const englishClass = classTranslation[classe] || 'Goblin Adventurer';
   
-  // Criar o prompt em inglês
-  const prompt = `RPG character sheet for goblin named ${name}, a ${englishClass}. 
-Physical traits: ${height}, ${weight}, ${skinColor} skin, ${eyeColor} eyes, ${physicalTrait}. 
+  // Criar o prompt em inglês - versão simplificada com apenas características essenciais
+  const prompt = `RPG character sheet for goblin ${name}, a ${englishClass}. 
+${skinColor} skin, ${eyeColor} eyes. 
 Stats: Combat ${combate}, Skill ${habilidade}, Wits ${nocao}, Vitality ${vitalidade}. 
-Personality: ${personalityTrait}. 
-Special ability: ${safeTalent}. 
-${luckOrCurse.type === 'luck' ? 'Lucky trait' : 'Challenge'}: ${safeLuckDesc}. 
-Equipment: ${safeWeapon}, ${safeArmor}, ${safeItem}.
-Art style: colorful cartoon character sheet, cute goblin illustration showing physical features, holding equipment, hand-drawn style, fantasy RPG game sheet layout.`;
+Equipment: ${safeWeapon}.
+Art style: colorful cartoon character sheet, cute goblin illustration, fantasy RPG game.`;
 
   // Verificar o comprimento do prompt
   if (prompt.length > 950) {
     console.warn(`Prompt muito longo (${prompt.length} caracteres). Reduzindo...`);
-    // Versão mais curta em inglês
+    // Versão ainda mais curta em inglês
     return `RPG character sheet for goblin ${name}. 
-Physical traits: ${height}, ${skinColor} skin, ${eyeColor} eyes. 
-Stats: Combat ${combate}, Skill ${habilidade}, Wits ${nocao}, Vitality ${vitalidade}. 
-Art style: colorful cartoon character sheet, cute goblin illustration, fantasy RPG game.`;
+${skinColor} skin. Stats: C${combate}, S${habilidade}, W${nocao}, V${vitalidade}. 
+Art style: colorful cartoon character sheet, fantasy RPG game.`;
   }
   
   return prompt;
@@ -108,8 +104,8 @@ export const generateGoblinImage = async (goblin: Goblin, apiKey: string): Promi
       console.warn(`Prompt excede 1000 caracteres (${prompt.length}). Isso pode causar erros.`);
     }
     
-    // Adicionar um estilo seguro para a imagem em inglês
-    const safeStyle = ", child-friendly style, cute cartoon, vibrant colors, suitable for all ages, fantasy tabletop game";
+    // Adicionar um estilo simples e seguro
+    const safeStyle = ", cartoon style, fantasy character sheet";
     const finalPrompt = prompt.length + safeStyle.length > 1000 ? prompt : prompt + safeStyle;
     
     console.log("Prompt final:", finalPrompt);

@@ -52,6 +52,8 @@ A API da OpenAI possui algumas limitações que podem afetar a geração de imag
 
 **Nota sobre idioma**: Para melhorar os resultados e reduzir erros, o aplicativo envia prompts em inglês para a API da OpenAI, mesmo que a interface do usuário esteja em português. Isso ocorre porque o modelo foi treinado principalmente com dados em inglês e tende a produzir resultados mais consistentes nesse idioma.
 
+**Simplificação de prompts**: Para evitar problemas com as políticas de conteúdo da OpenAI, os prompts foram simplificados para incluir apenas as características mais relevantes do goblin: nome, classe, cor da pele, olhos e equipamento principal. Isso ajuda a garantir que as imagens sejam geradas com sucesso.
+
 Se você encontrar erros de violação de política de conteúdo, tente:
 1. Gerar um novo goblin com características diferentes
 2. Regenerar a imagem (às vezes o mesmo goblin pode funcionar em uma nova tentativa)

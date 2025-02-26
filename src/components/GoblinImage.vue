@@ -39,7 +39,7 @@ const generateImage = async () => {
       if (result.error.includes('content_policy_violation') || 
           result.error.includes('safety system') || 
           result.error.includes('policy')) {
-        error.value = 'A descrição do goblin contém elementos que violam as políticas de conteúdo da OpenAI. Estamos usando prompts em inglês para melhorar os resultados. Tente gerar outro goblin ou regenerar a imagem.';
+        error.value = 'Erro na geração da imagem. Estamos usando um prompt simplificado em inglês para melhorar os resultados. Tente gerar outro goblin ou regenerar a imagem.';
       } else {
         error.value = result.error;
       }
