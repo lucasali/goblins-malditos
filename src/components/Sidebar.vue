@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import DiceRoller from './DiceRoller.vue';
 
 // Props
 const props = defineProps({
@@ -67,7 +68,7 @@ const closeSidebar = () => {
   >
     <!-- Header -->
     <div class="sidebar-header">
-      <h2 class="text-xl">Grimório Goblin</h2>
+      <h2 class="text-xl">Rolador de Dados</h2>
       <button 
         @click="closeSidebar" 
         class="close-button"
@@ -82,7 +83,7 @@ const closeSidebar = () => {
     
     <!-- Content -->
     <div class="sidebar-content">
-      <!-- Empty content as requested -->
+      <DiceRoller />
     </div>
     
     <!-- Footer -->

@@ -1,5 +1,34 @@
 // Tabelas de dados para geração aleatória de goblins
 
+/* Etapa 2: Ocupação
+ * 
+ * Role dois dados, veja a ocupação e descritor do seu goblin e anote seus atributos
+ * e equipamentos na sua ficha.
+ * 
+ */
+export const occupations = [
+  'Mercenário', 'Caçador', 'Gatuno', 'Líder', 'Incendiário', 'Bruxo'
+];
+
+export const describer = [
+  'Covarde', 'Atrapalhado', 'Tapado', 'Fracote', 'Medíocre', 'Supimpa'
+]
+
+/* Etapa 3: Característica 
+ * 
+ * Role dois dados e veja a característica distinta do seu goblin. O primeiro dado
+ * para a coluna e o segundo para a linha.
+ * 
+ */
+export const traits = [
+  'Bomba-relógio', 'Minicabeça', 'Apêndice extra', 'Poros fedidos', 'Verdura',
+  'Cinzento', 'Cabeção', 'Orelha extra', 'Pintas', 'Minion', 'Fosforescente',
+  'Amaldiçoado', 'Linguão', 'Nariz extra', 'Listras', 'Galináceo', 'Colorido',
+  'Tom bélico', 'Olho gigante', 'Olhos extras', 'Pompom', 'Peixoso', 'Amarelo',
+  'Flutulência', 'Pés gigantes', 'Braço extra', 'Chifre', 'Felino', 'Azul',
+  'Mão gigante', 'Cabeça extra', 'Cicatrizes', 'Aracnídeo', 'Vermelho'
+]
+
 // Nomes de goblins (primeiro nome + sobrenome)
 export const firstNames = [
   'Zug', 'Grik', 'Blat', 'Snot', 'Guz', 'Urg', 'Skab', 'Kruk', 'Glob', 'Rot',
