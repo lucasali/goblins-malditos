@@ -1,15 +1,39 @@
 <script setup lang="ts">
 import type { Goblin } from '../services/goblinGenerator';
+import { ref, computed } from 'vue';
 
 // Propriedades do componente
-defineProps<{
+const props = defineProps<{
   goblin: Goblin;
 }>();
 
-// Emitir evento para copiar o goblin
+// Emitir eventos
 const emit = defineEmits<{
   (e: 'copy'): void;
+  (e: 'update:attributes', attributes: { combate: number; habilidade: number; noção: number; vitalidade: number }): void;
 }>();
+
+// Criar cópias locais dos atributos para manipulação
+const attributes = ref({
+  combate: props.goblin.attributes.combate,
+  habilidade: props.goblin.attributes.habilidade,
+  noção: props.goblin.attributes.noção,
+  vitalidade: props.goblin.attributes.vitalidade
+});
+
+// Limites para os atributos
+const MIN_ATTRIBUTE = 1;
+const MAX_ATTRIBUTE = 6;
+
+// Função para atualizar um atributo
+const updateAttribute = (attribute: keyof typeof attributes.value, value: number) => {
+  // Garantir que o valor esteja dentro dos limites
+  const newValue = Math.max(MIN_ATTRIBUTE, Math.min(MAX_ATTRIBUTE, value));
+  attributes.value[attribute] = newValue;
+  
+  // Emitir evento para atualizar o goblin no componente pai
+  emit('update:attributes', { ...attributes.value });
+};
 
 // Função para copiar o goblin
 const copyGoblin = () => {
@@ -49,17 +73,141 @@ const copyGoblin = () => {
         <!-- Atributos -->
         <div class="goblin-section mb-4">
           <h3 class="text-xl font-goblin text-goblin-green mb-2">Atributos</h3>
-          <div class="goblin-attribute">
-            <span class="goblin-attribute-title">Combate:</span> {{ goblin.attributes.combate }}
+          
+          <!-- Combate -->
+          <div class="goblin-attribute attribute-slider">
+            <div class="flex justify-between items-center mb-1">
+              <span class="goblin-attribute-title">Combate:</span>
+              <span class="attribute-value">{{ attributes.combate }}</span>
+            </div>
+            <div class="slider-container">
+              <button 
+                @click="updateAttribute('combate', attributes.combate - 1)" 
+                class="slider-button" 
+                :disabled="attributes.combate <= MIN_ATTRIBUTE"
+                :class="{ 'disabled': attributes.combate <= MIN_ATTRIBUTE }"
+              >
+                -
+              </button>
+              <input 
+                type="range" 
+                min="1" 
+                max="6" 
+                v-model.number="attributes.combate" 
+                @input="updateAttribute('combate', attributes.combate)"
+                class="attribute-slider"
+              />
+              <button 
+                @click="updateAttribute('combate', attributes.combate + 1)" 
+                class="slider-button" 
+                :disabled="attributes.combate >= MAX_ATTRIBUTE"
+                :class="{ 'disabled': attributes.combate >= MAX_ATTRIBUTE }"
+              >
+                +
+              </button>
+            </div>
           </div>
-          <div class="goblin-attribute">
-            <span class="goblin-attribute-title">Habilidade:</span> {{ goblin.attributes.habilidade }}
+          
+          <!-- Habilidade -->
+          <div class="goblin-attribute attribute-slider">
+            <div class="flex justify-between items-center mb-1">
+              <span class="goblin-attribute-title">Habilidade:</span>
+              <span class="attribute-value">{{ attributes.habilidade }}</span>
+            </div>
+            <div class="slider-container">
+              <button 
+                @click="updateAttribute('habilidade', attributes.habilidade - 1)" 
+                class="slider-button" 
+                :disabled="attributes.habilidade <= MIN_ATTRIBUTE"
+                :class="{ 'disabled': attributes.habilidade <= MIN_ATTRIBUTE }"
+              >
+                -
+              </button>
+              <input 
+                type="range" 
+                min="1" 
+                max="6" 
+                v-model.number="attributes.habilidade" 
+                @input="updateAttribute('habilidade', attributes.habilidade)"
+                class="attribute-slider"
+              />
+              <button 
+                @click="updateAttribute('habilidade', attributes.habilidade + 1)" 
+                class="slider-button" 
+                :disabled="attributes.habilidade >= MAX_ATTRIBUTE"
+                :class="{ 'disabled': attributes.habilidade >= MAX_ATTRIBUTE }"
+              >
+                +
+              </button>
+            </div>
           </div>
-          <div class="goblin-attribute">
-            <span class="goblin-attribute-title">Noção:</span> {{ goblin.attributes.noção }}
+          
+          <!-- Noção -->
+          <div class="goblin-attribute attribute-slider">
+            <div class="flex justify-between items-center mb-1">
+              <span class="goblin-attribute-title">Noção:</span>
+              <span class="attribute-value">{{ attributes.noção }}</span>
+            </div>
+            <div class="slider-container">
+              <button 
+                @click="updateAttribute('noção', attributes.noção - 1)" 
+                class="slider-button" 
+                :disabled="attributes.noção <= MIN_ATTRIBUTE"
+                :class="{ 'disabled': attributes.noção <= MIN_ATTRIBUTE }"
+              >
+                -
+              </button>
+              <input 
+                type="range" 
+                min="1" 
+                max="6" 
+                v-model.number="attributes.noção" 
+                @input="updateAttribute('noção', attributes.noção)"
+                class="attribute-slider"
+              />
+              <button 
+                @click="updateAttribute('noção', attributes.noção + 1)" 
+                class="slider-button" 
+                :disabled="attributes.noção >= MAX_ATTRIBUTE"
+                :class="{ 'disabled': attributes.noção >= MAX_ATTRIBUTE }"
+              >
+                +
+              </button>
+            </div>
           </div>
-          <div class="goblin-attribute">
-            <span class="goblin-attribute-title">Vitalidade:</span> {{ goblin.attributes.vitalidade }}
+          
+          <!-- Vitalidade -->
+          <div class="goblin-attribute attribute-slider">
+            <div class="flex justify-between items-center mb-1">
+              <span class="goblin-attribute-title">Vitalidade:</span>
+              <span class="attribute-value">{{ attributes.vitalidade }}</span>
+            </div>
+            <div class="slider-container">
+              <button 
+                @click="updateAttribute('vitalidade', attributes.vitalidade - 1)" 
+                class="slider-button" 
+                :disabled="attributes.vitalidade <= MIN_ATTRIBUTE"
+                :class="{ 'disabled': attributes.vitalidade <= MIN_ATTRIBUTE }"
+              >
+                -
+              </button>
+              <input 
+                type="range" 
+                min="1" 
+                max="6" 
+                v-model.number="attributes.vitalidade" 
+                @input="updateAttribute('vitalidade', attributes.vitalidade)"
+                class="attribute-slider"
+              />
+              <button 
+                @click="updateAttribute('vitalidade', attributes.vitalidade + 1)" 
+                class="slider-button" 
+                :disabled="attributes.vitalidade >= MAX_ATTRIBUTE"
+                :class="{ 'disabled': attributes.vitalidade >= MAX_ATTRIBUTE }"
+              >
+                +
+              </button>
+            </div>
           </div>
         </div>
 
@@ -166,6 +314,45 @@ const copyGoblin = () => {
 
 .goblin-attribute-title {
   @apply font-bold;
+}
+
+/* Estilos para os sliders de atributos */
+.attribute-slider {
+  @apply mb-3;
+}
+
+.slider-container {
+  @apply flex items-center;
+}
+
+.attribute-value {
+  @apply font-bold text-goblin-green text-lg;
+}
+
+input[type="range"] {
+  @apply flex-grow mx-2 h-2 rounded-full bg-goblin-brown appearance-none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  @apply w-4 h-4 rounded-full bg-goblin-green cursor-pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  @apply w-4 h-4 rounded-full bg-goblin-green cursor-pointer border-none;
+}
+
+.slider-button {
+  @apply w-6 h-6 flex items-center justify-center bg-goblin-brown text-white rounded-full font-bold;
+}
+
+.slider-button:hover:not(.disabled) {
+  @apply bg-goblin-green;
+}
+
+.slider-button.disabled {
+  @apply opacity-50 cursor-not-allowed;
 }
 
 /* Ajustes para o layout responsivo */

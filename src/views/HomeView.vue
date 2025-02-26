@@ -167,6 +167,13 @@ ${goblin.luckOrCurse ? `${goblin.luckOrCurse.type === 'luck' ? 'SORTE' : 'MALDI√
       alert('Erro ao copiar o goblin. Tente novamente.');
     });
 };
+
+// Fun√ß√£o para atualizar os atributos do goblin
+const updateGoblinAttributes = (newAttributes: Partial<Goblin['attributes']>) => {
+  if (currentGoblin.value) {
+    currentGoblin.value.attributes = { ...currentGoblin.value.attributes, ...newAttributes };
+  }
+};
 </script>
 
 <template>
@@ -251,6 +258,7 @@ ${goblin.luckOrCurse ? `${goblin.luckOrCurse.type === 'luck' ? 'SORTE' : 'MALDI√
             <GoblinCard 
               :goblin="currentGoblin" 
               @copy="copyGoblinToClipboard" 
+              @update:attributes="updateGoblinAttributes"
             />
           </div>
           
