@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import Dice from './Dice.vue';
 import { useDiceStore } from '../stores/diceStore';
 
@@ -36,17 +36,6 @@ const addRollingAnimation = (id: number) => {
   }
 };
 
-// Adicionar animação de tremor ao container de dados
-const addShakeAnimation = () => {
-  if (diceContainerRef.value) {
-    // Removendo a animação do container, pois agora cada dado terá sua própria animação
-    // diceContainerRef.value.classList.add('shake');
-    // setTimeout(() => {
-    //   diceContainerRef.value?.classList.remove('shake');
-    // }, 500);
-  }
-};
-
 // Sobrescrever o método rollDice para adicionar animações
 const rollDice = () => {
   if (diceStore.isRolling || diceStore.diceList.length === 0) return;
@@ -58,15 +47,6 @@ const rollDice = () => {
   diceStore.diceList.forEach((dice) => {
     addRollingAnimation(dice.id);
   });
-};
-
-// Sobrescrever o método rollSpecificDice para adicionar animações
-const rollSpecificDice = (id: number) => {
-  // Rolar o dado específico
-  diceStore.rollSpecificDice(id);
-  
-  // Adicionar animação ao dado
-  addRollingAnimation(id);
 };
 </script>
 
