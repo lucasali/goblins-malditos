@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import GoblinCard from '../components/GoblinCard.vue';
 import GoblinImage from '../components/GoblinImage.vue';

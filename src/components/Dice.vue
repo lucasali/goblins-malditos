@@ -11,7 +11,7 @@ const props = defineProps({
   },
   result: {
     type: Number,
-    default: null
+    default: undefined
   },
   selected: {
     type: Boolean,
@@ -28,7 +28,7 @@ const isRolling = ref(false);
 // Computed
 const diceLabel = computed(() => `d${props.faces}`);
 const diceClass = computed(() => `dice-d${props.faces}`);
-const hasResult = computed(() => props.result !== null);
+const hasResult = computed(() => props.result !== null && props.result !== undefined);
 
 // Methods
 const handleClick = () => {
@@ -76,7 +76,7 @@ defineExpose({
     <div class="dice-inner">
       <div class="dice-face">
         <span class="dice-label">{{ diceLabel }}</span>
-        <span v-if="result !== null" class="dice-result">{{ result }}</span>
+        <span v-if="result !== null && result !== undefined" class="dice-result">{{ result }}</span>
       </div>
     </div>
   </div>
