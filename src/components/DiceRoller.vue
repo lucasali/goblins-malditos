@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 import Dice from './Dice.vue';
 import { useDiceStore } from '../stores/diceStore';
-import { socketService } from '../services/socketService';
 
 // Store do Pinia
 const diceStore = useDiceStore();
@@ -10,12 +9,6 @@ const diceStore = useDiceStore();
 // Refs para os componentes de dados
 const diceRefs = ref<Record<number, any>>({});
 const diceContainerRef = ref<HTMLElement | null>(null);
-
-// Refs para o Socket.IO
-const roomId = ref<string>('');
-const isConnected = ref<boolean>(false);
-const showRoomControls = ref<boolean>(false);
-const connectedUsers = ref<string[]>([]);
 
 // Método para definir referências aos componentes de dados
 const setDiceRef = (id: number, el: any) => {
@@ -43,7 +36,7 @@ const addRollingAnimation = (id: number) => {
   }
 };
 
-// Sobrescrever o método rollDice para adicionar animações e enviar para o servidor
+// Sobrescrever o método rollDice para adicionar animações
 const rollDice = () => {
   if (diceStore.isRolling || diceStore.diceList.length === 0) return;
   
@@ -54,73 +47,7 @@ const rollDice = () => {
   diceStore.diceList.forEach((dice) => {
     addRollingAnimation(dice.id);
   });
-
-  // Enviar o estado dos dados para o servidor se estiver conectado
-  if (isConnected.value && socketService.roomId) {
-    socketService.sendDiceRoll(diceStore.diceList);
-  }
 };
-
-// Métodos para o Socket.IO
-const toggleRoomControls = () => {
-  showRoomControls.value = !showRoomControls.value;
-};
-
-const connectToRoom = () => {
-  if (!roomId.value.trim()) {
-    alert('Por favor, insira um ID de sala válido');
-    return;
-  }
-
-  // Inicializar o serviço de socket se ainda não estiver inicializado
-  if (!socketService.isConnected) {
-    socketService.init();
-  }
-
-  // Entrar na sala
-  socketService.joinRoom(roomId.value);
-  isConnected.value = true;
-  showRoomControls.value = false;
-};
-
-const disconnectFromRoom = () => {
-  socketService.disconnect();
-  isConnected.value = false;
-};
-
-// Gerar um ID de sala aleatório
-const generateRoomId = () => {
-  const randomId = Math.random().toString(36).substring(2, 10);
-  roomId.value = randomId;
-};
-
-// Lifecycle hooks
-onMounted(() => {
-  // Inscrever-se para atualizações de estado dos dados
-  const unsubscribe = socketService.onDiceStateUpdate((diceState) => {
-    // Atualizar o estado local apenas se não for o remetente
-    if (diceState.length > 0) {
-      // Pausar a rolagem atual se estiver acontecendo
-      if (diceStore.isRolling) {
-        diceStore.isRolling = false;
-      }
-
-      // Atualizar a lista de dados usando o método da store
-      diceStore.updateDiceState(diceState);
-
-      // Adicionar animações aos dados
-      diceState.forEach((dice) => {
-        addRollingAnimation(dice.id);
-      });
-    }
-  });
-
-  // Limpar a inscrição quando o componente for desmontado
-  onUnmounted(() => {
-    unsubscribe();
-    socketService.disconnect();
-  });
-});
 </script>
 
 <template>
@@ -139,60 +66,6 @@ onMounted(() => {
             d{{ faces }}
           </option>
         </select>
-      </div>
-
-      <!-- Botão para mostrar/esconder controles de sala -->
-      <button 
-        @click="toggleRoomControls" 
-        class="room-toggle-button"
-        :class="{ 'connected': isConnected }"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
-        </svg>
-        <span>{{ isConnected ? 'Conectado' : 'Conectar' }}</span>
-      </button>
-    </div>
-
-    <!-- Controles de sala -->
-    <div v-if="showRoomControls" class="room-controls">
-      <div class="room-id-input">
-        <label for="room-id">ID da Sala:</label>
-        <input 
-          type="text" 
-          id="room-id" 
-          v-model="roomId" 
-          placeholder="Digite o ID da sala"
-          :disabled="isConnected"
-        />
-        <button 
-          @click="generateRoomId" 
-          class="generate-room-button"
-          :disabled="isConnected"
-        >
-          Gerar ID
-        </button>
-      </div>
-      
-      <div class="room-buttons">
-        <button 
-          v-if="!isConnected" 
-          @click="connectToRoom" 
-          class="connect-button"
-        >
-          Conectar à Sala
-        </button>
-        <button 
-          v-else 
-          @click="disconnectFromRoom" 
-          class="disconnect-button"
-        >
-          Desconectar
-        </button>
-      </div>
-
-      <div v-if="isConnected && socketService.connectedUsers.length > 0" class="connected-users">
-        <p>Usuários conectados: {{ socketService.connectedUsers.length + 1 }}</p>
       </div>
     </div>
     
@@ -478,100 +351,4 @@ onMounted(() => {
 .rolling {
   animation: diceRoll 0.6s ease-in-out;
 } */
-
-/* Estilos para os controles de sala */
-.room-toggle-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: #4a5568;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.room-toggle-button:hover {
-  background-color: #2d3748;
-}
-
-.room-toggle-button.connected {
-  background-color: #48bb78;
-}
-
-.room-toggle-button.connected:hover {
-  background-color: #38a169;
-}
-
-.room-controls {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #2d3748;
-  border-radius: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.room-id-input {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.room-id-input input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #4a5568;
-  border-radius: 0.25rem;
-  background-color: #1a202c;
-  color: white;
-}
-
-.generate-room-button {
-  padding: 0.5rem;
-  background-color: #4a5568;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-
-.room-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.connect-button, .disconnect-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.connect-button {
-  background-color: #4299e1;
-  color: white;
-}
-
-.connect-button:hover {
-  background-color: #3182ce;
-}
-
-.disconnect-button {
-  background-color: #f56565;
-  color: white;
-}
-
-.disconnect-button:hover {
-  background-color: #e53e3e;
-}
-
-.connected-users {
-  font-size: 0.875rem;
-  color: #a0aec0;
-}
 </style> 
