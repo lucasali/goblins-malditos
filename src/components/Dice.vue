@@ -10,8 +10,8 @@ const props = defineProps({
     validator: (value: number) => [4, 6, 8, 10, 12, 20, 100].includes(value)
   },
   result: {
-    type: Number,
-    default: undefined
+    type: Number as () => number | null | undefined,
+    default: undefined as number | undefined | null
   },
   selected: {
     type: Boolean,
