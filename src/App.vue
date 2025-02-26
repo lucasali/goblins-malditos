@@ -156,17 +156,23 @@ ${goblin.luckOrCurse.description}
       leave-to-class="opacity-0"
     >
       <div v-if="currentGoblin" class="goblin-display">
-        <!-- Imagem do Goblin -->
-        <GoblinImage 
-          :goblin="currentGoblin" 
-          :apiKey="apiKey"
-        />
-        
-        <!-- Detalhes do Goblin -->
-        <GoblinCard 
-          :goblin="currentGoblin" 
-          @copy="copyGoblinToClipboard" 
-        />
+        <div class="goblin-content-wrapper">
+          <!-- Detalhes do Goblin (agora à esquerda) -->
+          <div class="goblin-card-wrapper">
+            <GoblinCard 
+              :goblin="currentGoblin" 
+              @copy="copyGoblinToClipboard" 
+            />
+          </div>
+          
+          <!-- Imagem do Goblin (agora à direita) -->
+          <div class="goblin-image-wrapper">
+            <GoblinImage 
+              :goblin="currentGoblin" 
+              :apiKey="apiKey"
+            />
+          </div>
+        </div>
       </div>
     </transition>
     
@@ -196,13 +202,53 @@ ${goblin.luckOrCurse.description}
   animation: shake 0.5s;
 }
 
+/* Layout responsivo para a exibição do goblin */
 .goblin-display {
-  @apply flex flex-col items-center;
+  @apply w-full;
 }
 
+.goblin-content-wrapper {
+  @apply flex flex-col items-center gap-4;
+  max-width: 100%;
+}
+
+.goblin-image-wrapper, .goblin-card-wrapper {
+  @apply w-full;
+}
+
+/* Layout para telas médias e grandes */
 @media (min-width: 768px) {
-  .goblin-display {
-    @apply max-w-4xl mx-auto;
+  .goblin-content-wrapper {
+    @apply flex-row items-start justify-center gap-6;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .goblin-card-wrapper {
+    @apply w-3/5 px-2;
+  }
+  
+  .goblin-image-wrapper {
+    @apply w-2/5 px-2;
+  }
+}
+
+/* Layout para telas grandes */
+@media (min-width: 1024px) {
+  .goblin-content-wrapper {
+    @apply gap-8;
+  }
+  
+  .goblin-container {
+    @apply px-6;
+  }
+  
+  .goblin-card-wrapper {
+    @apply w-3/5 px-3;
+  }
+  
+  .goblin-image-wrapper {
+    @apply w-2/5 px-3;
   }
 }
 </style>

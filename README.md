@@ -8,7 +8,7 @@ Uma aplicação web interativa para gerar goblins aleatórios para o RPG Goblins
 - **Características Detalhadas**: Nome, aparência física, personalidade, equipamentos e mais
 - **Interface Temática**: Design visual que reflete o espírito caótico dos goblins
 - **Exportação Fácil**: Copie os detalhes do goblin para usar em suas sessões de jogo
-- **Fichas de Personagem por IA**: Visualize seus goblins com fichas de personagem geradas por inteligência artificial, incluindo ilustrações personalizadas e atributos de RPG
+- **Fichas de Personagem por IA**: Gere fichas de personagem sob demanda com ilustrações personalizadas e atributos de RPG
 - **Download de Fichas**: Baixe as fichas geradas como imagens para usar em suas sessões de jogo
 
 ## Tecnologias Utilizadas
@@ -43,6 +43,17 @@ Para utilizar a funcionalidade de geração de fichas de personagem, você preci
 **Nota**: A geração de imagens é um serviço pago. Verifique os preços atuais na [documentação da OpenAI](https://platform.openai.com/docs/guides/rate-limits).
 
 **Modelo DALL-E 3**: Esta aplicação utiliza o modelo DALL-E 3 da OpenAI para gerar fichas de personagem de alta qualidade, semelhantes às que você obteria no ChatGPT. Este modelo oferece resultados superiores, mas tem um custo mais elevado (aproximadamente $0.04 USD por imagem na resolução 1024x1024). Certifique-se de que sua conta OpenAI tenha créditos suficientes.
+
+### Geração de Fichas Sob Demanda
+
+Para economizar seus créditos da API OpenAI, a aplicação agora permite que você escolha quando gerar a ficha de personagem:
+
+1. Gere um goblin usando o botão "Gerar Goblin"
+2. Visualize as características do goblin gerado
+3. Se desejar uma ficha visual, clique no botão "Gerar Ficha de Personagem"
+4. A ficha será gerada usando a API da OpenAI (DALL-E 3)
+
+Isso permite que você gere múltiplos goblins sem consumir créditos da API, gerando fichas apenas para os goblins que você realmente deseja utilizar.
 
 ### Limitações da API
 

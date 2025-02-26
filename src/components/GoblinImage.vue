@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref } from 'vue';
 import type { Goblin } from '../services/goblinGenerator';
 import { generateGoblinImage, getPlaceholderImage } from '../services/imageGenerator';
 
@@ -115,16 +115,6 @@ const downloadImage = async () => {
     error.value = 'Erro ao baixar a imagem. Tente novamente.';
   }
 };
-
-// Gerar imagem quando o componente for montado
-onMounted(() => {
-  generateImage();
-});
-
-// Observar mudanças no goblin para gerar nova imagem
-watch(() => props.goblin, () => {
-  generateImage();
-}, { deep: true });
 </script>
 
 <template>
@@ -163,13 +153,34 @@ watch(() => props.goblin, () => {
         <button 
           @click="downloadImage" 
           class="text-sm bg-goblin-brown hover:bg-goblin-green px-2 py-1 rounded"
-          :disabled="isLoading"
+          :disabled="isLoading || !imageUrl"
         >
           Baixar Ficha
         </button>
       </div>
       
       <div v-if="error" class="error-message text-sm text-red-500 mt-2">
+        {{ error }}
+      </div>
+    </div>
+    
+    <!-- Área para quando não há imagem gerada -->
+    <div v-else class="no-image-container">
+      <p class="text-goblin-brown mb-4 text-center">
+        Clique no botão abaixo para gerar uma ficha de personagem para este goblin.
+        <br>
+        <span class="text-xs text-goblin-gray">Isso usará a API da OpenAI (DALL-E 3) e pode custar aproximadamente $0.04 USD.</span>
+      </p>
+      
+      <button 
+        @click="generateImage" 
+        class="goblin-button"
+        :disabled="isLoading"
+      >
+        Gerar Ficha de Personagem
+      </button>
+      
+      <div v-if="error" class="error-message text-sm text-red-500 mt-4">
         {{ error }}
       </div>
     </div>
@@ -204,12 +215,13 @@ watch(() => props.goblin, () => {
 
 <style scoped>
 .goblin-image-container {
-  @apply w-full flex justify-center items-center mb-6;
-  min-height: 300px;
+  @apply w-full flex justify-center items-center;
+  min-height: 200px;
 }
 
 .loading-container {
-  @apply flex flex-col items-center justify-center;
+  @apply flex flex-col items-center justify-center w-full;
+  min-height: 300px;
 }
 
 .loading-spinner {
@@ -218,18 +230,26 @@ watch(() => props.goblin, () => {
 }
 
 .image-container {
-  @apply flex flex-col items-center;
+  @apply flex flex-col items-center w-full;
 }
 
 .goblin-image {
-  @apply rounded-lg shadow-lg border-2 border-goblin-brown max-w-full cursor-pointer;
+  @apply rounded-lg shadow-lg border-2 border-goblin-brown cursor-pointer;
+  max-width: 100%;
   max-height: 500px;
   transform: rotate(-1deg);
   transition: transform 0.3s ease;
+  object-fit: contain;
 }
 
 .goblin-image:hover {
   transform: rotate(0deg) scale(1.02);
+}
+
+.no-image-container {
+  @apply flex flex-col items-center justify-center p-6 border-2 border-dashed border-goblin-brown rounded-lg w-full;
+  min-height: 300px;
+  background-color: rgba(139, 109, 92, 0.1);
 }
 
 .error-message {
@@ -256,6 +276,32 @@ watch(() => props.goblin, () => {
 
 .fullscreen-controls {
   @apply w-full;
+}
+
+/* Ajustes para o layout responsivo */
+@media (min-width: 768px) {
+  .goblin-image-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  .no-image-container {
+    height: 100%;
+    min-height: 400px;
+  }
+  
+  .goblin-image {
+    max-height: 500px;
+    width: 100%;
+    object-fit: contain;
+    transform: rotate(1deg); /* Rotação oposta à ficha */
+  }
+  
+  .goblin-image:hover {
+    transform: rotate(0deg) scale(1.02);
+  }
 }
 
 @keyframes spin {
