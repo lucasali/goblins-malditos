@@ -8,20 +8,11 @@ interface ImageGenerationResponse {
 
 // Função para gerar a prompt para a IA baseada nos atributos do goblin
 export const generateGoblinPrompt = (goblin: Goblin): string => {
-  const { name, physicalAttributes, personality, equipment, specialTalent, luckOrCurse } = goblin;
+  const { name, physicalAttributes, equipment } = goblin;
   
   // Extrair características principais para a prompt
-  const height = physicalAttributes.height.split('(')[0].trim();
-  const weight = physicalAttributes.weight.split('(')[0].trim();
   const skinColor = physicalAttributes.skinColor;
   const eyeColor = physicalAttributes.eyeColor;
-  
-  // Selecionar apenas 1 característica física e 1 de personalidade para reduzir o tamanho
-  const physicalTrait = physicalAttributes.physicalTraits[0] || '';
-  const personalityTrait = personality[0] || '';
-  
-  // Selecionar apenas 1 item para reduzir o tamanho
-  const item = equipment.items[0] || '';
   
   // Gerar valores aleatórios para atributos de RPG (1-4)
   const combate = Math.floor(Math.random() * 4) + 1;
@@ -41,35 +32,25 @@ export const generateGoblinPrompt = (goblin: Goblin): string => {
     classe = 'Aventureiro Desastrado';
   }
   
+  // Construir a prompt para a IA (versão reduzida)
   // Sanitizar descrições para evitar conteúdo problemático
   const sanitizeText = (text: string): string => {
     // Lista de palavras que podem violar as políticas de conteúdo
     const problematicTerms = [
       /armas?/gi, /matar/gi, /morte/gi, /sangue/gi, /violência/gi, /violento/gi, 
       /maldição/gi, /afiado/gi, /cortar/gi, /ferir/gi, /machucar/gi, /perigoso/gi,
-      /veneno/gi, /explosivo/gi, /lâmina/gi, /faca/gi, /espada/gi, /garras?/gi,
-      /machado/gi, /martelo/gi, /porrete/gi, /adaga/gi, /punhal/gi, /lança/gi,
-      /metal/gi, /metálico/gi, /aço/gi, /ferro/gi, /pontiagudo/gi, /cortante/gi
+      /veneno/gi, /explosivo/gi, /lâmina/gi, /faca/gi, /espada/gi
     ];
     
     let safeText = text;
     problematicTerms.forEach(term => {
-      safeText = safeText.replace(term, 'tool');
+      safeText = safeText.replace(term, 'item');
     });
-    
-    // Verificar se o texto sanitizado ainda contém palavras potencialmente problemáticas
-    if (/weapon|knife|blade|sword|axe|hammer|dagger|claw|sharp|metal/i.test(safeText)) {
-      return 'magic wand';
-    }
     
     return safeText;
   };
   
   const safeWeapon = sanitizeText(equipment.weapon);
-  const safeArmor = sanitizeText(equipment.armor);
-  const safeItem = sanitizeText(item);
-  const safeTalent = sanitizeText(specialTalent);
-  const safeLuckDesc = sanitizeText(luckOrCurse.description);
   
   // Traduzir classe para inglês
   const classTranslation: Record<string, string> = {
@@ -81,16 +62,22 @@ export const generateGoblinPrompt = (goblin: Goblin): string => {
   
   const englishClass = classTranslation[classe] || 'Goblin Adventurer';
   
-  // Sanitizar cores para evitar termos problemáticos
-  const safeSkinColor = skinColor.replace(/sangue|vermelho|escarlate/gi, 'green');
-  const safeEyeColor = eyeColor.replace(/sangue|vermelho|escarlate/gi, 'yellow');
-  
-  // Criar o prompt em inglês - versão extremamente simplificada
-  const prompt = `Cute fantasy character sheet for goblin ${name}. 
-${safeSkinColor} skin, ${safeEyeColor} eyes. 
-Stats: C${combate}, S${habilidade}, W${nocao}, V${vitalidade}. 
-Art style: colorful cartoon, child-friendly fantasy illustration.`;
+  // Criar o prompt em inglês - versão simplificada com apenas características essenciais
+  const prompt = `RPG character sheet for goblin ${name}, a ${englishClass}. 
+${skinColor} skin, ${eyeColor} eyes. 
+Stats: Combat ${combate}, Skill ${habilidade}, Wits ${nocao}, Vitality ${vitalidade}. 
+Equipment: ${safeWeapon}.
+Art style: colorful cartoon character sheet, cute goblin illustration, fantasy RPG game.`;
 
+  // Verificar o comprimento do prompt
+  if (prompt.length > 950) {
+    console.warn(`Prompt muito longo (${prompt.length} caracteres). Reduzindo...`);
+    // Versão ainda mais curta em inglês
+    return `RPG character sheet for goblin ${name}. 
+${skinColor} skin. Stats: C${combate}, S${habilidade}, W${nocao}, V${vitalidade}. 
+Art style: colorful cartoon character sheet, fantasy RPG game.`;
+  }
+  
   return prompt;
 };
 
@@ -104,8 +91,8 @@ export const generateGoblinImage = async (goblin: Goblin, apiKey: string): Promi
       console.warn(`Prompt excede 1000 caracteres (${prompt.length}). Isso pode causar erros.`);
     }
     
-    // Adicionar um estilo extremamente seguro
-    const safeStyle = ", children's book illustration style, G-rated content, family-friendly";
+    // Adicionar um estilo simples e seguro
+    const safeStyle = ", cartoon style, fantasy character sheet";
     const finalPrompt = prompt.length + safeStyle.length > 1000 ? prompt : prompt + safeStyle;
     
     console.log("Prompt final:", finalPrompt);
