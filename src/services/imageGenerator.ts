@@ -8,31 +8,22 @@ interface ImageGenerationResponse {
 
 // Função para gerar a prompt para a IA baseada nos atributos do goblin
 export const generateGoblinPrompt = (goblin: Goblin): string => {
-  const { name, physicalAttributes, equipment } = goblin;
+  const { name, occupation, describer, physicalAttributes, equipment, attributes } = goblin;
   
   // Extrair características principais para a prompt
   const skinColor = physicalAttributes.skinColor;
   const eyeColor = physicalAttributes.eyeColor;
+  const trait = physicalAttributes.trait;
   
-  // Gerar valores aleatórios para atributos de RPG (1-4)
-  const combate = Math.floor(Math.random() * 4) + 1;
-  const habilidade = Math.floor(Math.random() * 4) + 1;
-  const nocao = Math.floor(Math.random() * 4) + 1;
-  const vitalidade = Math.floor(Math.random() * 4) + 1;
+  // Usar os atributos reais do goblin
+  const combate = attributes.combate;
+  const habilidade = attributes.habilidade;
+  const nocao = attributes.noção;
+  const vitalidade = attributes.vitalidade;
   
-  // Determinar uma classe baseada nos atributos e personalidade
-  let classe = '';
-  if (combate > habilidade && combate > nocao) {
-    classe = 'Guerreiro Caótico';
-  } else if (habilidade > combate && habilidade > nocao) {
-    classe = 'Gatuno Trapaceiro';
-  } else if (nocao > combate && nocao > habilidade) {
-    classe = 'Xamã Duvidoso';
-  } else {
-    classe = 'Aventureiro Desastrado';
-  }
+  // Determinar uma classe baseada na ocupação e descritor
+  let classe = `${describer} ${occupation}`;
   
-  // Construir a prompt para a IA (versão reduzida)
   // Sanitizar descrições para evitar conteúdo problemático
   const sanitizeText = (text: string): string => {
     // Lista de palavras que podem violar as políticas de conteúdo
@@ -51,24 +42,40 @@ export const generateGoblinPrompt = (goblin: Goblin): string => {
   };
   
   const safeWeapon = sanitizeText(equipment.weapon);
+  const safeArmor = sanitizeText(equipment.armor);
+  const safeTrait = sanitizeText(trait);
   
-  // Traduzir classe para inglês
-  const classTranslation: Record<string, string> = {
-    'Guerreiro Caótico': 'Chaotic Warrior',
-    'Gatuno Trapaceiro': 'Trickster Rogue',
-    'Xamã Duvidoso': 'Dubious Shaman',
-    'Aventureiro Desastrado': 'Clumsy Adventurer'
+  // Traduzir ocupação para inglês
+  const occupationTranslation: Record<string, string> = {
+    'Mercenário': 'Mercenary',
+    'Caçador': 'Hunter',
+    'Gatuno': 'Thief',
+    'Líder': 'Leader',
+    'Incendiário': 'Arsonist',
+    'Bruxo': 'Warlock'
   };
   
-  const englishClass = classTranslation[classe] || 'Goblin Adventurer';
+  // Traduzir descritor para inglês
+  const describerTranslation: Record<string, string> = {
+    'Covarde': 'Cowardly',
+    'Atrapalhado': 'Clumsy',
+    'Tapado': 'Dumb',
+    'Fracote': 'Weak',
+    'Medíocre': 'Mediocre',
+    'Supimpa': 'Awesome'
+  };
+  
+  const englishOccupation = occupationTranslation[occupation] || 'Adventurer';
+  const englishDescriber = describerTranslation[describer] || 'Chaotic';
   
   // Criar o prompt em inglês - versão específica para ficha de personagem
-  const prompt = `Create a detailed RPG character sheet for a goblin named "${name}", a ${englishClass}. 
+  const prompt = `Create a detailed RPG character sheet for a goblin named "${name}", a ${englishDescriber} ${englishOccupation}. 
 The character sheet should have:
 - A large cartoon illustration of the goblin with ${skinColor} skin and ${eyeColor} eyes
 - The goblin's name "${name}" in a banner
 - Stats displayed clearly: Combat ${combate}, Skill ${habilidade}, Wits ${nocao}, Vitality ${vitalidade}
-- The goblin holding its equipment: ${safeWeapon}
+- The goblin holding its equipment: ${safeWeapon} and wearing ${safeArmor}
+- Distinctive trait: ${safeTrait}
 - Fantasy RPG style layout with decorative borders
 - Parchment background texture
 

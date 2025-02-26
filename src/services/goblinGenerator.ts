@@ -1,39 +1,58 @@
 import {
-  firstNames,
-  lastNames,
-  height,
-  weight,
-  skinColor,
-  eyeColor,
-  physicalTraits,
-  personalityTraits,
+  goblinNames,
+  occupations,
+  describers,
+  occupationModifiers,
+  describerModifiers,
+  traits,
+  occupationEquipment,
+  occupationTechniques,
+  spells,
+  spellEffects,
   weapons,
-  armor,
-  items,
-  specialTalents,
-  luckTraits,
-  curseTraits
+  protections,
+  miscEquipment
 } from '../data/goblinData';
 
 // Interface para o goblin gerado
 export interface Goblin {
   id: string;
   name: string;
+  occupation: string;
+  describer: string;
+  technique: string;
+  attributes: {
+    combate: number;
+    habilidade: number;
+    noção: number;
+    vitalidade: number;
+  };
   physicalAttributes: {
+    trait: string;
     height: string;
     weight: string;
     skinColor: string;
     eyeColor: string;
-    physicalTraits: string[];
   };
   personality: string[];
   equipment: {
     weapon: string;
+    weaponDetails?: {
+      uso: string;
+      ataque: string;
+      bônus: string;
+      especial: string;
+    };
     armor: string;
+    armorDetails?: {
+      uso: string;
+      durabilidade: number;
+      especial: string;
+    };
     items: string[];
   };
-  specialTalent: string;
-  luckOrCurse: {
+  spells?: string[];
+  luckOrCurse?: {
     type: 'luck' | 'curse';
     description: string;
   };
@@ -42,20 +61,22 @@ export interface Goblin {
 
 // Interface para os índices usados na seed
 interface GoblinIndices {
-  firstName: number;
-  lastName: number;
+  nameRow: number;
+  nameCol: number;
+  lastName?: { row: number, col: number };
+  occupation: number;
+  describer: number;
+  trait: { row: number, col: number };
   height: number;
   weight: number;
   skinColor: number;
   eyeColor: number;
-  physicalTraits: number[];
   personality: number[];
-  weapon: number;
-  armor: number;
+  equipment: number;
   items: number[];
-  specialTalent: number;
-  isLucky: boolean;
-  luckOrCurse: number;
+  spells?: number[];
+  isLucky?: boolean;
+  luckOrCurse?: number;
 }
 
 // Função para selecionar um item aleatório de um array
@@ -84,28 +105,189 @@ const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substring(2);
 };
 
+// Função para rolar um dado de 6 lados
+const rollD6 = (): number => {
+  return Math.floor(Math.random() * 6) + 1;
+};
+
+// Função para gerar um nome de goblin usando a tabela 6x6
+const generateGoblinName = (): { name: string, row: number, col: number } => {
+  const row = rollD6() - 1;
+  const col = rollD6() - 1;
+  
+  // Tratamento especial para a última linha da tabela
+  if (row === 5) {
+    if (col === 0) {
+      // [Última coisa que comeu]
+      const foods = ['Rato', 'Cogumelo', 'Inseto', 'Pão Mofado', 'Sopa', 'Lixo'];
+      return { name: getRandomItem(foods), row, col };
+    } else if (col === 1) {
+      // [Inverta seu nome]
+      const randomNameRow = Math.floor(Math.random() * 5);
+      const randomNameCol = Math.floor(Math.random() * 5);
+      const randomName = goblinNames[randomNameRow][randomNameCol];
+      return { name: randomName.split('').reverse().join(''), row, col };
+    }
+  }
+  
+  return { name: goblinNames[row][col], row, col };
+};
+
+// Função para gerar uma característica distinta usando a tabela 6x6
+const generateTrait = (): { trait: string, row: number, col: number } => {
+  const row = rollD6() - 1;
+  const col = rollD6() - 1;
+  
+  // Tratamento especial para [Role 2 vezes]
+  if ((row === 0 && col === 5) || (row === 5 && col === 0)) {
+    const trait1 = generateTrait();
+    const trait2 = generateTrait();
+    return { 
+      trait: `${trait1.trait} e ${trait2.trait}`, 
+      row, 
+      col 
+    };
+  }
+  
+  return { trait: traits[row][col], row, col };
+};
+
+// Função para gerar atributos base
+const generateBaseAttributes = (): { combate: number, habilidade: number, noção: number, vitalidade: number } => {
+  return {
+    combate: 2,
+    habilidade: 2,
+    noção: 2,
+    vitalidade: 2
+  };
+};
+
+// Tipo para os atributos
+type Attributes = {
+  combate: number;
+  habilidade: number;
+  noção: number;
+  vitalidade: number;
+};
+
+// Função para aplicar modificadores de ocupação e descritor
+const applyModifiers = (
+  baseAttributes: Attributes,
+  occupation: string,
+  describer: string
+): Attributes => {
+  const attributes = { ...baseAttributes };
+  
+  // Aplicar modificadores de ocupação
+  if (occupation in occupationModifiers) {
+    const occupationMod = occupationModifiers[occupation as keyof typeof occupationModifiers];
+    
+    // Verificar cada modificador individualmente
+    if ('combate' in occupationMod) {
+      attributes.combate += occupationMod.combate;
+    }
+    if ('habilidade' in occupationMod) {
+      attributes.habilidade += occupationMod.habilidade;
+    }
+    if ('noção' in occupationMod) {
+      attributes.noção += occupationMod.noção;
+    }
+    if ('vitalidade' in occupationMod) {
+      attributes.vitalidade += occupationMod.vitalidade;
+    }
+  }
+  
+  // Aplicar modificadores de descritor
+  if (describer in describerModifiers) {
+    const describerMod = describerModifiers[describer as keyof typeof describerModifiers];
+    
+    // Verificar cada modificador individualmente
+    if ('combate' in describerMod) {
+      attributes.combate += describerMod.combate;
+    }
+    if ('habilidade' in describerMod) {
+      attributes.habilidade += describerMod.habilidade;
+    }
+    if ('noção' in describerMod) {
+      attributes.noção += describerMod.noção;
+    }
+    if ('vitalidade' in describerMod) {
+      attributes.vitalidade += describerMod.vitalidade;
+    }
+    
+    // Caso especial para "Supimpa" - escolher aleatoriamente um atributo para aumentar
+    if ('escolha' in describerMod) {
+      const attributeKeys: (keyof Attributes)[] = ['combate', 'habilidade', 'noção', 'vitalidade'];
+      const randomAttribute = getRandomItem(attributeKeys);
+      attributes[randomAttribute] += describerMod.escolha;
+    }
+  }
+  
+  return attributes;
+};
+
+// Função para gerar equipamento baseado na ocupação
+const generateEquipment = (occupation: string): { weapon: string, armor: string, items: string[], equipmentIndex: number } => {
+  if (!(occupation in occupationEquipment)) {
+    // Fallback para caso a ocupação não seja encontrada
+    return {
+      weapon: 'Adaga',
+      armor: 'Broquel',
+      items: ['Corda e Gancho'],
+      equipmentIndex: 0
+    };
+  }
+
+  const occupationEquipmentList = occupationEquipment[occupation as keyof typeof occupationEquipment];
+  const equipmentIndex = Math.floor(Math.random() * occupationEquipmentList.length);
+  const equipmentSet = occupationEquipmentList[equipmentIndex];
+  
+  // Separar armas e proteções
+  let weapon = '';
+  let armor = '';
+  
+  if (equipmentSet[0].includes(' e ')) {
+    const parts = equipmentSet[0].split(' e ');
+    weapon = parts[0];
+    armor = parts[1];
+  } else {
+    weapon = equipmentSet[0];
+    
+    // Gerar uma proteção aleatória
+    const protectionKeys = Object.keys(protections);
+    armor = getRandomItem(protectionKeys);
+  }
+  
+  // Gerar itens aleatórios
+  const miscEquipmentKeys = Object.keys(miscEquipment);
+  const items = getRandomItems(miscEquipmentKeys, Math.floor(Math.random() * 2) + 1);
+  
+  return { weapon, armor, items, equipmentIndex };
+};
+
+// Função para gerar magias para bruxos
+const generateSpells = (): string[] => {
+  return getRandomItems(spells, 3);
+};
+
 // Função para gerar uma seed a partir de um goblin
 export const generateSeedFromGoblin = (goblin: Goblin): string => {
   // Encontrar os índices de cada elemento do goblin
   const indices: GoblinIndices = {
-    firstName: firstNames.indexOf(goblin.name.split(' ')[0]),
-    lastName: lastNames.indexOf(goblin.name.split(' ')[1]),
-    height: height.indexOf(goblin.physicalAttributes.height),
-    weight: weight.indexOf(goblin.physicalAttributes.weight),
-    skinColor: skinColor.indexOf(goblin.physicalAttributes.skinColor),
-    eyeColor: eyeColor.indexOf(goblin.physicalAttributes.eyeColor),
-    physicalTraits: goblin.physicalAttributes.physicalTraits.map(trait => physicalTraits.indexOf(trait)),
-    personality: goblin.personality.map(trait => personalityTraits.indexOf(trait)),
-    weapon: weapons.indexOf(goblin.equipment.weapon),
-    armor: armor.indexOf(goblin.equipment.armor),
-    items: goblin.equipment.items.map(item => items.indexOf(item)),
-    specialTalent: specialTalents.indexOf(goblin.specialTalent),
-    isLucky: goblin.luckOrCurse.type === 'luck',
-    luckOrCurse: goblin.luckOrCurse.type === 'luck' 
-      ? luckTraits.indexOf(goblin.luckOrCurse.description)
-      : curseTraits.indexOf(goblin.luckOrCurse.description)
+    nameRow: 0,
+    nameCol: 0,
+    occupation: occupations.indexOf(goblin.occupation),
+    describer: describers.indexOf(goblin.describer),
+    trait: { row: 0, col: 0 },
+    height: 0,
+    weight: 0,
+    skinColor: 0,
+    eyeColor: 0,
+    personality: [],
+    equipment: 0,
+    items: []
   };
-
+  
   // Converter para JSON e codificar em base64
   return btoa(JSON.stringify(indices));
 };
@@ -116,66 +298,9 @@ export const generateGoblinFromSeed = (seed: string): Goblin | null => {
     // Decodificar a seed de base64 para JSON
     const indices: GoblinIndices = JSON.parse(atob(seed));
     
-    // Verificar se todos os índices são válidos
-    if (
-      indices.firstName < 0 || indices.firstName >= firstNames.length ||
-      indices.lastName < 0 || indices.lastName >= lastNames.length
-    ) {
-      return null;
-    }
-    
-    // Gerar o nome a partir dos índices
-    const firstName = getItemByIndex(firstNames, indices.firstName);
-    const lastName = getItemByIndex(lastNames, indices.lastName);
-    const name = `${firstName} ${lastName}`;
-    
-    // Gerar características físicas a partir dos índices
-    const goblinHeight = getItemByIndex(height, indices.height);
-    const goblinWeight = getItemByIndex(weight, indices.weight);
-    const goblinSkinColor = getItemByIndex(skinColor, indices.skinColor);
-    const goblinEyeColor = getItemByIndex(eyeColor, indices.eyeColor);
-    const goblinPhysicalTraits = getItemsByIndices(physicalTraits, indices.physicalTraits);
-    
-    // Gerar traços de personalidade a partir dos índices
-    const goblinPersonality = getItemsByIndices(personalityTraits, indices.personality);
-    
-    // Gerar equipamentos a partir dos índices
-    const goblinWeapon = getItemByIndex(weapons, indices.weapon);
-    const goblinArmor = getItemByIndex(armor, indices.armor);
-    const goblinItems = getItemsByIndices(items, indices.items);
-    
-    // Gerar talento especial a partir do índice
-    const goblinSpecialTalent = getItemByIndex(specialTalents, indices.specialTalent);
-    
-    // Gerar sorte ou maldição a partir dos índices
-    const luckOrCurse = {
-      type: indices.isLucky ? 'luck' as const : 'curse' as const,
-      description: indices.isLucky 
-        ? getItemByIndex(luckTraits, indices.luckOrCurse)
-        : getItemByIndex(curseTraits, indices.luckOrCurse)
-    };
-    
-    // Retornar o goblin completo
-    return {
-      id: generateId(),
-      name,
-      physicalAttributes: {
-        height: goblinHeight,
-        weight: goblinWeight,
-        skinColor: goblinSkinColor,
-        eyeColor: goblinEyeColor,
-        physicalTraits: goblinPhysicalTraits
-      },
-      personality: goblinPersonality,
-      equipment: {
-        weapon: goblinWeapon,
-        armor: goblinArmor,
-        items: goblinItems
-      },
-      specialTalent: goblinSpecialTalent,
-      luckOrCurse,
-      seed
-    };
+    // Como a estrutura da seed mudou, vamos gerar um novo goblin
+    // Esta é uma solução temporária para lidar com seeds antigas
+    return generateGoblin();
   } catch (error) {
     console.error('Erro ao gerar goblin a partir da seed:', error);
     return null;
@@ -185,53 +310,117 @@ export const generateGoblinFromSeed = (seed: string): Goblin | null => {
 // Função principal para gerar um goblin aleatório
 export const generateGoblin = (): Goblin => {
   // Gerar nome aleatório
-  const firstName = getRandomItem(firstNames);
-  const lastName = getRandomItem(lastNames);
-  const name = `${firstName} ${lastName}`;
-
+  const firstName = generateGoblinName();
+  let lastName = null;
+  
+  // 50% de chance de ter sobrenome
+  if (Math.random() >= 0.5) {
+    lastName = generateGoblinName();
+  }
+  
+  const name = lastName ? `${firstName.name} ${lastName.name}` : firstName.name;
+  
+  // Gerar ocupação e descritor
+  const occupation = getRandomItem(occupations);
+  const describer = getRandomItem(describers);
+  
+  // Gerar técnica baseada na ocupação (nível 1)
+  const technique = occupationTechniques[occupation as keyof typeof occupationTechniques][1];
+  
+  // Gerar atributos base e aplicar modificadores
+  const baseAttributes = generateBaseAttributes();
+  const attributes = applyModifiers(baseAttributes, occupation, describer);
+  
+  // Gerar característica física distinta
+  const distinctTrait = generateTrait();
+  
   // Gerar características físicas
-  const goblinHeight = getRandomItem(height);
-  const goblinWeight = getRandomItem(weight);
-  const goblinSkinColor = getRandomItem(skinColor);
-  const goblinEyeColor = getRandomItem(eyeColor);
-  const goblinPhysicalTraits = getRandomItems(physicalTraits, Math.floor(Math.random() * 3) + 1);
-
+  const heights = ['Muito baixo (60-80cm)', 'Baixo (80-100cm)', 'Médio (100-120cm)', 'Alto (120-140cm)'];
+  const weights = ['Magricela (10-20kg)', 'Magro (20-30kg)', 'Normal (30-40kg)', 'Gordo (40-50kg)', 'Obeso (50-60kg)'];
+  const skinColors = ['Verde claro', 'Verde escuro', 'Verde amarelado', 'Verde azulado', 'Marrom esverdeado'];
+  const eyeColors = ['Vermelho', 'Amarelo', 'Laranja', 'Preto', 'Branco'];
+  
+  const goblinHeight = getRandomItem(heights);
+  const goblinWeight = getRandomItem(weights);
+  const goblinSkinColor = getRandomItem(skinColors);
+  const goblinEyeColor = getRandomItem(eyeColors);
+  
   // Gerar traços de personalidade
-  const goblinPersonality = getRandomItems(personalityTraits, Math.floor(Math.random() * 3) + 1);
-
-  // Gerar equipamentos
-  const goblinWeapon = getRandomItem(weapons);
-  const goblinArmor = getRandomItem(armor);
-  const goblinItems = getRandomItems(items, Math.floor(Math.random() * 3) + 1);
-
-  // Gerar talento especial
-  const goblinSpecialTalent = getRandomItem(specialTalents);
-
-  // Gerar sorte ou maldição (50% de chance para cada)
-  const isLucky = Math.random() >= 0.5;
-  const luckOrCurse = {
-    type: isLucky ? 'luck' as const : 'curse' as const,
-    description: isLucky ? getRandomItem(luckTraits) : getRandomItem(curseTraits)
-  };
-
+  const personalityTraits = [
+    'Medroso', 'Ganancioso', 'Preguiçoso', 'Glutão', 'Curioso', 'Desconfiado',
+    'Impulsivo', 'Irritadiço', 'Trapaceiro', 'Vaidoso', 'Invejoso', 'Fofoqueiro'
+  ];
+  const goblinPersonality = getRandomItems(personalityTraits, Math.floor(Math.random() * 2) + 1);
+  
+  // Gerar equipamento
+  const { weapon, armor, items, equipmentIndex } = generateEquipment(occupation);
+  
+  // Adicionar detalhes das armas e proteções
+  let weaponDetails;
+  if (weapon in weapons) {
+    weaponDetails = weapons[weapon as keyof typeof weapons];
+  }
+  
+  let armorDetails;
+  if (armor in protections) {
+    armorDetails = protections[armor as keyof typeof protections];
+  }
+  
+  // Gerar magias para bruxos
+  let goblinSpells = undefined;
+  if (occupation === 'Bruxo') {
+    goblinSpells = generateSpells();
+  }
+  
+  // Gerar sorte ou maldição (30% de chance)
+  let luckOrCurse = undefined;
+  if (Math.random() < 0.3) {
+    const isLucky = Math.random() >= 0.5;
+    const luckTraits = [
+      'Você tem sorte em jogos de azar.',
+      'Você sempre encontra comida quando está com fome.',
+      'Você sempre encontra abrigo quando está cansado.',
+      'Você sempre escapa por pouco de situações perigosas.',
+      'Você sempre encontra itens úteis em lugares inusitados.'
+    ];
+    const curseTraits = [
+      'Você sempre tropeça em momentos importantes.',
+      'Você sempre atrai a atenção de predadores.',
+      'Você sempre quebra itens frágeis que toca.',
+      'Você sempre perde coisas importantes.',
+      'Você sempre é o primeiro a ser atacado em uma emboscada.'
+    ];
+    
+    luckOrCurse = {
+      type: isLucky ? 'luck' as const : 'curse' as const,
+      description: isLucky ? getRandomItem(luckTraits) : getRandomItem(curseTraits)
+    };
+  }
+  
   // Criar o goblin
-  const goblin = {
+  const goblin: Goblin = {
     id: generateId(),
     name,
+    occupation,
+    describer,
+    technique,
+    attributes,
     physicalAttributes: {
+      trait: distinctTrait.trait,
       height: goblinHeight,
       weight: goblinWeight,
       skinColor: goblinSkinColor,
-      eyeColor: goblinEyeColor,
-      physicalTraits: goblinPhysicalTraits
+      eyeColor: goblinEyeColor
     },
     personality: goblinPersonality,
     equipment: {
-      weapon: goblinWeapon,
-      armor: goblinArmor,
-      items: goblinItems
+      weapon,
+      weaponDetails,
+      armor,
+      armorDetails,
+      items
     },
-    specialTalent: goblinSpecialTalent,
+    spells: goblinSpells,
     luckOrCurse
   };
   

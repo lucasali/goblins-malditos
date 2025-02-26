@@ -32,9 +32,43 @@ const copyGoblin = () => {
       </div>
 
       <div class="goblin-sections">
+        <!-- Ocupação e Descritor -->
+        <div class="goblin-section mb-4">
+          <h3 class="text-xl font-goblin text-goblin-green mb-2">Ocupação e Descritor</h3>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Ocupação:</span> {{ goblin.occupation }}
+          </div>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Descritor:</span> {{ goblin.describer }}
+          </div>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Técnica:</span> {{ goblin.technique }}
+          </div>
+        </div>
+
+        <!-- Atributos -->
+        <div class="goblin-section mb-4">
+          <h3 class="text-xl font-goblin text-goblin-green mb-2">Atributos</h3>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Combate:</span> {{ goblin.attributes.combate }}
+          </div>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Habilidade:</span> {{ goblin.attributes.habilidade }}
+          </div>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Noção:</span> {{ goblin.attributes.noção }}
+          </div>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Vitalidade:</span> {{ goblin.attributes.vitalidade }}
+          </div>
+        </div>
+
         <!-- Características Físicas -->
         <div class="goblin-section mb-4">
           <h3 class="text-xl font-goblin text-goblin-green mb-2">Características Físicas</h3>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Característica Distinta:</span> {{ goblin.physicalAttributes.trait }}
+          </div>
           <div class="goblin-attribute">
             <span class="goblin-attribute-title">Altura:</span> {{ goblin.physicalAttributes.height }}
           </div>
@@ -46,14 +80,6 @@ const copyGoblin = () => {
           </div>
           <div class="goblin-attribute">
             <span class="goblin-attribute-title">Cor dos Olhos:</span> {{ goblin.physicalAttributes.eyeColor }}
-          </div>
-          <div class="goblin-attribute">
-            <span class="goblin-attribute-title">Características Notáveis:</span> 
-            <ul class="list-disc list-inside ml-2">
-              <li v-for="trait in goblin.physicalAttributes.physicalTraits" :key="trait">
-                {{ trait }}
-              </li>
-            </ul>
           </div>
         </div>
 
@@ -67,32 +93,20 @@ const copyGoblin = () => {
           </ul>
         </div>
 
-        <!-- Talento Especial -->
-        <div class="goblin-section mb-4">
-          <h3 class="text-xl font-goblin text-goblin-green mb-2">Talento Especial</h3>
-          <div class="goblin-attribute">
-            {{ goblin.specialTalent }}
-          </div>
-        </div>
-
-        <!-- Sorte/Maldição -->
-        <div class="goblin-section mb-4">
-          <h3 class="text-xl font-goblin text-goblin-green mb-2">
-            {{ goblin.luckOrCurse.type === 'luck' ? 'Sorte' : 'Maldição' }}
-          </h3>
-          <div class="goblin-attribute" :class="{ 'text-green-600': goblin.luckOrCurse.type === 'luck', 'text-red-600': goblin.luckOrCurse.type === 'curse' }">
-            {{ goblin.luckOrCurse.description }}
-          </div>
-        </div>
-
         <!-- Equipamento -->
         <div class="goblin-section mb-4">
           <h3 class="text-xl font-goblin text-goblin-green mb-2">Equipamento</h3>
           <div class="goblin-attribute">
             <span class="goblin-attribute-title">Arma:</span> {{ goblin.equipment.weapon }}
+            <span v-if="goblin.equipment.weaponDetails" class="text-xs ml-2 text-goblin-dark">
+              ({{ goblin.equipment.weaponDetails.uso }}, {{ goblin.equipment.weaponDetails.ataque }}, {{ goblin.equipment.weaponDetails.bônus }})
+            </span>
           </div>
           <div class="goblin-attribute">
-            <span class="goblin-attribute-title">Armadura:</span> {{ goblin.equipment.armor }}
+            <span class="goblin-attribute-title">Proteção:</span> {{ goblin.equipment.armor }}
+            <span v-if="goblin.equipment.armorDetails" class="text-xs ml-2 text-goblin-dark">
+              ({{ goblin.equipment.armorDetails.uso }}, Durabilidade: {{ goblin.equipment.armorDetails.durabilidade }})
+            </span>
           </div>
           <div class="goblin-attribute">
             <span class="goblin-attribute-title">Itens:</span>
@@ -101,6 +115,26 @@ const copyGoblin = () => {
                 {{ item }}
               </li>
             </ul>
+          </div>
+        </div>
+
+        <!-- Magias (se for Bruxo) -->
+        <div class="goblin-section mb-4" v-if="goblin.occupation === 'Bruxo' && goblin.spells && goblin.spells.length > 0">
+          <h3 class="text-xl font-goblin text-goblin-green mb-2">Magias</h3>
+          <ul class="list-disc list-inside ml-2">
+            <li v-for="spell in goblin.spells" :key="spell">
+              {{ spell }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Sorte/Maldição -->
+        <div class="goblin-section mb-4" v-if="goblin.luckOrCurse">
+          <h3 class="text-xl font-goblin text-goblin-green mb-2">
+            {{ goblin.luckOrCurse.type === 'luck' ? 'Sorte' : 'Maldição' }}
+          </h3>
+          <div class="goblin-attribute" :class="{ 'text-green-600': goblin.luckOrCurse.type === 'luck', 'text-red-600': goblin.luckOrCurse.type === 'curse' }">
+            {{ goblin.luckOrCurse.description }}
           </div>
         </div>
       </div>
@@ -130,6 +164,10 @@ const copyGoblin = () => {
   @apply mb-1.5;
 }
 
+.goblin-attribute-title {
+  @apply font-bold;
+}
+
 /* Ajustes para o layout responsivo */
 @media (min-width: 768px) {
   .goblin-card {
@@ -149,34 +187,46 @@ const copyGoblin = () => {
     @apply mb-2;
   }
   
-  /* Características físicas na primeira coluna */
+  /* Ocupação e Descritor na primeira coluna */
   .goblin-section:nth-child(1) {
     grid-column: 1;
-    grid-row: 1 / span 2;
+    grid-row: 1;
+  }
+  
+  /* Atributos na primeira coluna */
+  .goblin-section:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  
+  /* Características físicas na primeira coluna */
+  .goblin-section:nth-child(3) {
+    grid-column: 1;
+    grid-row: 3;
   }
   
   /* Personalidade na segunda coluna */
-  .goblin-section:nth-child(2) {
+  .goblin-section:nth-child(4) {
     grid-column: 2;
     grid-row: 1;
   }
   
-  /* Talento Especial na segunda coluna */
-  .goblin-section:nth-child(3) {
+  /* Equipamento na segunda coluna */
+  .goblin-section:nth-child(5) {
     grid-column: 2;
     grid-row: 2;
   }
   
-  /* Sorte/Maldição na segunda coluna */
-  .goblin-section:nth-child(4) {
+  /* Magias na segunda coluna */
+  .goblin-section:nth-child(6) {
     grid-column: 2;
     grid-row: 3;
   }
   
-  /* Equipamento na primeira coluna */
-  .goblin-section:nth-child(5) {
-    grid-column: 1;
-    grid-row: 3;
+  /* Sorte/Maldição na segunda coluna */
+  .goblin-section:nth-child(7) {
+    grid-column: 2;
+    grid-row: 4;
   }
 }
 

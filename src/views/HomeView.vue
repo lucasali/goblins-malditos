@@ -126,26 +126,35 @@ const copyGoblinToClipboard = () => {
   const goblinText = `
 GOBLIN MALDITO: ${goblin.name}
 
+OCUPAÇÃO E DESCRITOR:
+- Ocupação: ${goblin.occupation}
+- Descritor: ${goblin.describer}
+- Técnica: ${goblin.technique}
+
+ATRIBUTOS:
+- Combate: ${goblin.attributes.combate}
+- Habilidade: ${goblin.attributes.habilidade}
+- Noção: ${goblin.attributes.noção}
+- Vitalidade: ${goblin.attributes.vitalidade}
+
 CARACTERÍSTICAS FÍSICAS:
+- Característica Distinta: ${goblin.physicalAttributes.trait}
 - Altura: ${goblin.physicalAttributes.height}
 - Peso: ${goblin.physicalAttributes.weight}
 - Cor da Pele: ${goblin.physicalAttributes.skinColor}
 - Cor dos Olhos: ${goblin.physicalAttributes.eyeColor}
-- Características Notáveis: ${goblin.physicalAttributes.physicalTraits.join(', ')}
 
 PERSONALIDADE:
 ${goblin.personality.map(trait => `- ${trait}`).join('\n')}
 
 EQUIPAMENTO:
-- Arma: ${goblin.equipment.weapon}
-- Armadura: ${goblin.equipment.armor}
+- Arma: ${goblin.equipment.weapon}${goblin.equipment.weaponDetails ? ` (${goblin.equipment.weaponDetails.uso}, ${goblin.equipment.weaponDetails.ataque}, ${goblin.equipment.weaponDetails.bônus})` : ''}
+- Proteção: ${goblin.equipment.armor}${goblin.equipment.armorDetails ? ` (${goblin.equipment.armorDetails.uso}, Durabilidade: ${goblin.equipment.armorDetails.durabilidade})` : ''}
 - Itens: ${goblin.equipment.items.join(', ')}
 
-TALENTO ESPECIAL:
-${goblin.specialTalent}
+${goblin.spells && goblin.spells.length > 0 ? `MAGIAS:\n${goblin.spells.map(spell => `- ${spell}`).join('\n')}\n` : ''}
 
-${goblin.luckOrCurse.type === 'luck' ? 'SORTE' : 'MALDIÇÃO'}:
-${goblin.luckOrCurse.description}
+${goblin.luckOrCurse ? `${goblin.luckOrCurse.type === 'luck' ? 'SORTE' : 'MALDIÇÃO'}:\n${goblin.luckOrCurse.description}` : ''}
   `.trim();
   
   // Copiar para a área de transferência
