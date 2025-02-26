@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import GoblinCard from './components/GoblinCard.vue';
-import { generateGoblin, Goblin } from './services/goblinGenerator';
+import type { Goblin } from './services/goblinGenerator';
+import { generateGoblin } from './services/goblinGenerator';
 
 // Estado para armazenar o goblin atual
 const currentGoblin = ref<Goblin | null>(null);

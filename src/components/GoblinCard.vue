@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Goblin } from '../services/goblinGenerator';
+import type { Goblin } from '../services/goblinGenerator';
 
 // Propriedades do componente
-const props = defineProps<{
+defineProps<{
   goblin: Goblin;
 }>();
 
