@@ -144,6 +144,21 @@ export const useDiceStore = defineStore('dice', () => {
     }
   }
 
+  // Função para atualizar o estado dos dados a partir de uma fonte externa (Socket.IO)
+  function updateDiceState(newDiceState: DiceItem[]) {
+    if (newDiceState.length === 0) return;
+    
+    // Atualizar o nextId para ser maior que qualquer ID nos dados recebidos
+    const maxId = Math.max(...newDiceState.map(dice => dice.id));
+    if (maxId >= nextId.value) {
+      nextId.value = maxId + 1;
+    }
+    
+    // Atualizar a lista de dados
+    diceList.value = newDiceState;
+    showResults.value = true;
+  }
+
   // Inicializar com um d20
   if (diceList.value.length === 0) {
     addDice();
@@ -169,6 +184,7 @@ export const useDiceStore = defineStore('dice', () => {
     selectDice,
     setDiceResult,
     rollDice,
-    rollSpecificDice
+    rollSpecificDice,
+    updateDiceState
   };
 }); 
