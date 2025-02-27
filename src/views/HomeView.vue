@@ -13,6 +13,12 @@ const router = useRouter();
 // Estado para armazenar o goblin atual
 const currentGoblin = ref<Goblin | null>(null);
 
+// Estado para controlar se os atributos podem ser editados
+const canEditAttributes = ref<boolean>(false);
+
+// Estado para controlar se a imagem está visível
+const showImage = ref<boolean>(false);
+
 // Estado para armazenar a chave da API
 const apiKey = ref<string>('');
 const showApiConfig = ref<boolean>(false);
@@ -174,6 +180,16 @@ const updateGoblinAttributes = (newAttributes: Partial<Goblin['attributes']>) =>
     currentGoblin.value.attributes = { ...currentGoblin.value.attributes, ...newAttributes };
   }
 };
+
+// Função para alternar a edição de atributos (será usada para implementação futura de níveis)
+const toggleAttributeEditing = () => {
+  canEditAttributes.value = !canEditAttributes.value;
+};
+
+// Função para alternar a visibilidade da imagem
+const toggleImageVisibility = () => {
+  showImage.value = !showImage.value;
+};
 </script>
 
 <template>
@@ -187,55 +203,6 @@ const updateGoblinAttributes = (newAttributes: Partial<Goblin['attributes']>) =>
       <button @click="generateNewGoblin" class="goblin-button mb-4">
         {{ currentGoblin ? 'Gerar Outro Goblin' : 'Gerar Goblin' }}
       </button>
-      
-      <div class="flex space-x-2 mb-4">
-        <button 
-          @click="showApiConfig = !showApiConfig" 
-          class="text-sm bg-goblin-brown hover:bg-goblin-green px-3 py-1 rounded"
-        >
-          {{ apiKey ? 'Alterar API Key' : 'Configurar API Key' }}
-        </button>
-        
-        <button 
-          v-if="currentGoblin" 
-          @click="shareGoblin" 
-          class="text-sm bg-goblin-brown hover:bg-goblin-green px-3 py-1 rounded"
-          title="Compartilhar este goblin"
-        >
-          Compartilhar Goblin
-        </button>
-      </div>
-      
-      <!-- Mensagem de compartilhamento -->
-      <div 
-        v-if="showShareMessage" 
-        class="share-message bg-goblin-green text-white px-4 py-2 rounded-lg mb-4 transition-opacity duration-300"
-      >
-        {{ shareMessage }}
-      </div>
-      
-      <div v-if="showApiConfig" class="bg-goblin-dark p-4 rounded-lg border border-goblin-brown mb-4 max-w-md">
-        <h3 class="text-lg font-goblin text-goblin-green mb-2">Configuração da API OpenAI</h3>
-        <p class="text-sm mb-2">
-          Para gerar imagens dos goblins, você precisa de uma chave de API da OpenAI.
-          <a href="https://platform.openai.com/api-keys" target="_blank" class="text-goblin-green underline">
-            Obtenha uma aqui
-          </a>.
-        </p>
-        <div class="mb-2">
-          <input 
-            v-model="apiKey" 
-            type="password" 
-            placeholder="Insira sua chave de API da OpenAI" 
-            class="w-full p-2 rounded bg-goblin-gray text-white"
-          />
-        </div>
-        <div class="flex justify-end">
-          <button @click="saveApiKey" class="bg-goblin-green hover:bg-goblin-brown px-3 py-1 rounded">
-            Salvar
-          </button>
-        </div>
-      </div>
       
       <p class="text-goblin-brown italic text-sm max-w-md text-center" v-if="!currentGoblin">
         Clique no botão acima para gerar um goblin aleatório para sua aventura. 
@@ -251,31 +218,71 @@ const updateGoblinAttributes = (newAttributes: Partial<Goblin['attributes']>) =>
       leave-from-class="opacity-100" 
       leave-to-class="opacity-0"
     >
-      <div v-if="currentGoblin" class="goblin-display">
-        <div class="goblin-content-wrapper">
-          <!-- Detalhes do Goblin (agora à esquerda) -->
-          <div class="goblin-card-wrapper">
-            <GoblinCard 
-              :goblin="currentGoblin" 
-              @copy="copyGoblinToClipboard" 
-              @update:attributes="updateGoblinAttributes"
-            />
-          </div>
+      <div v-if="currentGoblin" class="goblin-display flex flex-col items-center gap-12">
+        <!-- Collapse para a imagem do goblin -->
+        <div class="image-collapse-container mb-12">
+          <button 
+            @click="toggleImageVisibility" 
+            class="collapse-button w-full flex justify-between items-center p-2 bg-goblin-brown hover:bg-goblin-green text-white rounded-t"
+          >
+            <span>{{ showImage ? 'Esconder Imagem do Goblin' : 'Mostrar Imagem do Goblin' }}</span>
+            <span class="transform transition-transform" :class="{ 'rotate-180': showImage }">▼</span>
+          </button>
           
-          <!-- Imagem do Goblin (agora à direita) -->
-          <div class="goblin-image-wrapper">
+          <div 
+            v-show="showImage" 
+            class="collapse-content bg-goblin-dark bg-opacity-20 p-4 rounded-b"
+          >
+            <div class="flex justify-end mb-2">
+              <button 
+                @click="showApiConfig = !showApiConfig" 
+                class="text-sm bg-goblin-brown hover:bg-goblin-green px-3 py-1 rounded flex items-center"
+              >
+                <span class="material-icons text-sm mr-1">key</span>
+                {{ apiKey ? 'Alterar API Key' : 'Configurar API Key' }}
+              </button>
+            </div>
+            
+            <div v-if="showApiConfig" class="bg-goblin-dark p-4 rounded-lg border border-goblin-brown mb-4">
+              <h3 class="text-lg font-goblin text-goblin-green mb-2">Configuração da API OpenAI</h3>
+              <p class="text-sm mb-2">
+                Para gerar imagens dos goblins, você precisa de uma chave de API da OpenAI.
+                <a href="https://platform.openai.com/api-keys" target="_blank" class="text-goblin-green underline">
+                  Obtenha uma aqui
+                </a>.
+              </p>
+              <div class="mb-2">
+                <input 
+                  v-model="apiKey" 
+                  type="password" 
+                  placeholder="Insira sua chave de API da OpenAI" 
+                  class="w-full p-2 rounded bg-goblin-gray text-white"
+                />
+              </div>
+              <div class="flex justify-end">
+                <button @click="saveApiKey" class="bg-goblin-green hover:bg-goblin-brown px-3 py-1 rounded">
+                  Salvar
+                </button>
+              </div>
+            </div>
+            
             <GoblinImage 
               :goblin="currentGoblin" 
               :apiKey="apiKey"
             />
           </div>
         </div>
+        
+        <GoblinCard 
+          :goblin="currentGoblin" 
+          :canEditAttributes="canEditAttributes"
+          @copy="copyGoblinToClipboard" 
+          @update:attributes="updateGoblinAttributes"
+          @share="shareGoblin"
+          @toggle-edit="toggleAttributeEditing"
+        />
       </div>
     </transition>
-    
-    <footer class="mt-8 text-center text-goblin-brown text-sm">
-      <p>Criado para o RPG Goblins Malditos - Onde a morte é apenas o começo!</p>
-    </footer>
   </div>
 </template> 
 
@@ -289,5 +296,19 @@ const updateGoblinAttributes = (newAttributes: Partial<Goblin['attributes']>) =>
   0% { opacity: 1; }
   70% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+/* Estilos para o collapse da imagem */
+.image-collapse-container {
+  width: 21cm;
+  margin: 0 auto;
+}
+
+.collapse-button {
+  font-family: 'Goblin', sans-serif;
+}
+
+.collapse-content {
+  transition: all 0.3s ease-in-out;
 }
 </style> 
