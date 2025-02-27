@@ -1,13 +1,3 @@
-// Tabelas de dados para geração aleatória de goblins baseado no RPG "Malditos Goblins"
-// Autor: Tiago Junges
-
-/*
- * Etapa 1: Nome
- *
- * Você pode inventar ou rolar dois dados na tabela abaixo.
- * O primeiro dado para a coluna e o segundo para a linha.
- * Você pode dar um segundo nome também para seu goblin ser de família.
- */
 export const goblinNames = [
   ['Plaft', 'Plin', 'Tik', 'Tok', 'Bash', 'Cricri'],
   ['Glub', 'Tim', 'Ranço', 'Yhaa', 'Vrum', 'Aiaiai'],
@@ -17,12 +7,6 @@ export const goblinNames = [
   ['[Última coisa que comeu]', '[Inverta seu nome]'],
 ]
 
-/*
- * Etapa 2: Ocupação
- *
- * Role dois dados, veja a ocupação e descritor do seu goblin e anote seus atributos
- * e equipamentos na sua ficha.
- */
 export const occupations = [
   'Mercenário',
   'Caçador',
@@ -41,7 +25,6 @@ export const describers = [
   'Supimpa',
 ]
 
-// Modificadores de atributos por ocupação
 export const occupationModifiers = {
   Mercenário: { combate: 1 },
   Caçador: { combate: 1 },
@@ -51,22 +34,15 @@ export const occupationModifiers = {
   Bruxo: { noção: 1 },
 }
 
-// Modificadores de atributos por descritor
 export const describerModifiers = {
   Covarde: { combate: -1 },
   Atrapalhado: { habilidade: -1 },
   Tapado: { noção: -1 },
   Fracote: { vitalidade: -1 },
-  Medíocre: { }, // Não altera nada
-  Supimpa: { escolha: 1 }, // Escolha um atributo para ganhar +1
+  Medíocre: { },
+  Supimpa: { escolha: 1 },
 }
 
-/*
- * Etapa 3: Característica
- *
- * Role dois dados e veja a característica distinta do seu goblin.
- * O primeiro dado para a coluna e o segundo para a linha.
- */
 export const traits = [
   ['Bomba-relógio', 'Minicabeça', 'Apêndice extra', 'Poros fedidos', 'Verdura', '[Role 2 vezes]'],
   ['Cinzento', 'Cabeção', 'Orelha extra', 'Pintas', 'Minion', 'Fosforescente'],
@@ -76,41 +52,39 @@ export const traits = [
   ['[Role 2 vezes]', 'Mão gigante', 'Cabeça extra', 'Cicatrizes', 'Aracnídeo', 'Vermelho'],
 ]
 
-// Equipamentos por ocupação
 export const occupationEquipment = {
   Mercenário: [
-    ['Espada e Escudo'],
-    ['2 Machadinhas'],
+    ['Espada', 'Escudo'],
+    ['Machadinha', 'Machadinha'],
     ['Machadão'],
   ],
   Caçador: [
-    ['3 Adagas'],
-    ['Arco de Caça'],
-    ['Pistola e Chapéu'],
+    ['Adaga', 'Adaga', 'Adaga'],
+    ['Arco e Flecha'],
+    ['Pistola', 'Chapéu'],
   ],
   Gatuno: [
-    ['3 Adagas'],
-    ['Rapieira e Broquel'],
-    ['Pistola e Chapéu'],
+    ['Adaga', 'Adaga', 'Adaga'],
+    ['Rapieira', 'Broquel'],
+    ['Pistola', 'Chapéu'],
   ],
   Líder: [
-    ['Espada e Medalhas de Guerra'],
-    ['Lança e Elmo'],
+    ['Espada', 'Medalhas de Guerra'],
+    ['Lança', 'Elmo'],
     ['Espadona'],
   ],
   Incendiário: [
     ['Barril de Pólvora'],
-    ['Pistola e Galinha Explosiva'],
-    ['Bacamarte e Chapéu'],
+    ['Pistola', 'Galinha Explosiva'],
+    ['Bacamarte', 'Chapéu'],
   ],
   Bruxo: [
     ['Cajado'],
-    ['Varinha e Cachecol'],
-    ['Vassoura e Chapéu'],
+    ['Varinha', 'Cachecol'],
+    ['Vassoura', 'Chapéu'],
   ],
 }
 
-// Técnicas por ocupação e nível
 export const occupationTechniques = {
   Mercenário: {
     1: 'Mestre de Armas: Você sempre rola + dado em todos os ataques que fizer lutando com sua arma favorita.',
@@ -144,7 +118,6 @@ export const occupationTechniques = {
   },
 }
 
-// Lista de magias disponíveis para o Bruxo
 export const spells = [
   'Fogo',
   'Gelo',
@@ -155,7 +128,6 @@ export const spells = [
   'Planta',
 ]
 
-// Efeitos das magias por número de hits
 export const spellEffects = {
   Fogo: {
     0: 'Uma explosão queima seu rosto e você recebe 1 ferimento.',
@@ -201,32 +173,30 @@ export const spellEffects = {
   },
 }
 
-// Armas e seus atributos
 export const weapons = {
-  'Adaga': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+1d', especial: 'Arremesso' },
-  'Arco e Flecha': { uso: 'Duas mãos', ataque: 'Distância', bônus: '+2d', especial: 'Munição [10]' },
-  'Bacamarte': { uso: 'Duas mãos', ataque: 'Distância', bônus: '+3d', especial: 'Recarga; Munição [2]' },
-  'Besta': { uso: 'Duas mãos', ataque: 'Distância', bônus: '+3d', especial: 'Recarga; Munição [6]' },
-  'Cajado': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+1d', especial: 'Condutor Mágico' },
-  'Clava': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+1d', especial: '' },
-  'Espada': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+2d', especial: '' },
-  'Espada de Madeira': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+0d', especial: '' },
-  'Espadona': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+3d', especial: '' },
-  'Estilingue': { uso: 'Duas mãos', ataque: 'Distância', bônus: '+0d', especial: 'Recarga' },
-  'Faca': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+1d', especial: '' },
-  'Forcado': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+2d', especial: '' },
-  'Gadanha': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+3d', especial: '' },
-  'Lança': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+3d', especial: '' },
-  'Machadão': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+3d', especial: '' },
-  'Machadinha': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+2d', especial: 'Arremesso' },
-  'Martelão': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+3d', especial: '' },
-  'Pistola': { uso: 'Uma mão', ataque: 'Distância', bônus: '+2d', especial: 'Recarga; Munição [5]' },
-  'Rapieira': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+2d', especial: '' },
-  'Varinha': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+0d', especial: 'Condutor Mágico' },
-  'Vassoura': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+1d', especial: 'Condutor Mágico' },
+  'Adaga': { uso: 'Uma mão', ataque: 'Corporal', bônus: 1, especial: 'Arremesso' },
+  'Arco e Flecha': { uso: 'Duas mãos', ataque: 'Distância', bônus: 2, especial: 'Munição [10]' },
+  'Bacamarte': { uso: 'Duas mãos', ataque: 'Distância', bônus: 3, especial: 'Recarga; Munição [2]' },
+  'Besta': { uso: 'Duas mãos', ataque: 'Distância', bônus: 3, especial: 'Recarga; Munição [6]' },
+  'Cajado': { uso: 'Duas mãos', ataque: 'Corporal', bônus: 1, especial: 'Condutor Mágico' },
+  'Clava': { uso: 'Uma mão', ataque: 'Corporal', bônus: 1, especial: '' },
+  'Espada': { uso: 'Uma mão', ataque: 'Corporal', bônus: 2, especial: '' },
+  'Espada de Madeira': { uso: 'Uma mão', ataque: 'Corporal', bônus: 0, especial: '' },
+  'Espadona': { uso: 'Duas mãos', ataque: 'Corporal', bônus: 3, especial: '' },
+  'Estilingue': { uso: 'Duas mãos', ataque: 'Distância', bônus: 0, especial: 'Recarga' },
+  'Faca': { uso: 'Uma mão', ataque: 'Corporal', bônus: 1, especial: '' },
+  'Forcado': { uso: 'Duas mãos', ataque: 'Corporal', bônus: 2, especial: '' },
+  'Gadanha': { uso: 'Duas mãos', ataque: 'Corporal', bônus: 3, especial: '' },
+  'Lança': { uso: 'Duas mãos', ataque: 'Corporal', bônus: 3, especial: '' },
+  'Machadão': { uso: 'Duas mãos', ataque: 'Corporal', bônus: 3, especial: '' },
+  'Machadinha': { uso: 'Uma mão', ataque: 'Corporal', bônus: 2, especial: 'Arremesso' },
+  'Martelão': { uso: 'Duas mãos', ataque: 'Corporal', bônus: 3, especial: '' },
+  'Pistola': { uso: 'Uma mão', ataque: 'Distância', bônus: 2, especial: 'Recarga; Munição [5]' },
+  'Rapieira': { uso: 'Uma mão', ataque: 'Corporal', bônus: 2, especial: '' },
+  'Varinha': { uso: 'Uma mão', ataque: 'Corporal', bônus: 0, especial: 'Condutor Mágico' },
+  'Vassoura': { uso: 'Duas mãos', ataque: 'Corporal', bônus: 1, especial: 'Condutor Mágico' },
 }
 
-// Proteções e seus atributos
 export const protections = {
   'Broquel': { uso: 'Uma mão', durabilidade: 1, especial: '' },
   'Cachecol': { uso: 'Pescoço', durabilidade: 0, especial: 'Arcano' },
@@ -240,7 +210,6 @@ export const protections = {
   'Tampa de Panela': { uso: 'Uma mão', durabilidade: 1, especial: '' },
 }
 
-// Equipamentos diversos
 export const miscEquipment = {
   'Aljava': 'Possui flechas suficientes para duplicar a quantidade de munição de um arco ou besta.',
   'Banquete': 'Comida suficiente pra alimentar um bando de goblins por 1d6 dias.',
@@ -255,22 +224,20 @@ export const miscEquipment = {
   'Veneno': 'Pode colocar na bebida de alguém. Aquele que beber receberá 1 ferimento por minuto.',
 }
 
-// Tabela de inimigos comuns
 export const enemies = {
-  'Camponês': { combate: 3, habilidade: 3, noção: 3, vitalidade: 3, equipamento: 'Clava', bônus: '+1' },
-  'Guarda': { combate: 4, habilidade: 4, noção: 3, vitalidade: 3, equipamento: 'Lança e Peitoral', bônus: '+3/+3' },
-  'Taverneiro': { combate: 3, habilidade: 3, noção: 4, vitalidade: 5, equipamento: 'Clava', bônus: '+1' },
-  'Nobre': { combate: 2, habilidade: 2, noção: 3, vitalidade: 2, equipamento: 'Espada Especial e Peitoral Reforçado', bônus: '+3/+4' },
-  'Criança': { combate: 2, habilidade: 2, noção: 2, vitalidade: 2, equipamento: 'Espada de Madeira', bônus: '+0' },
-  'Aventureiro': { combate: 5, habilidade: 4, noção: 4, vitalidade: 4, equipamento: 'Espada, Escudo, Peitoral e Elmo', bônus: '+2/+7' },
+  'Camponês': { combate: 3, habilidade: 3, noção: 3, vitalidade: 3, equipamento: 'Clava', bônus: 1 },
+  'Guarda': { combate: 4, habilidade: 4, noção: 3, vitalidade: 3, equipamento: 'Lança e Peitoral', bônus: [3, 3] },
+  'Taverneiro': { combate: 3, habilidade: 3, noção: 4, vitalidade: 5, equipamento: 'Clava', bônus: 1 },
+  'Nobre': { combate: 2, habilidade: 2, noção: 3, vitalidade: 2, equipamento: 'Espada Especial e Peitoral Reforçado', bônus: [3, 4] },
+  'Criança': { combate: 2, habilidade: 2, noção: 2, vitalidade: 2, equipamento: 'Espada de Madeira', bônus: 0 },
+  'Aventureiro': { combate: 5, habilidade: 4, noção: 4, vitalidade: 4, equipamento: 'Espada, Escudo, Peitoral e Elmo', bônus: [2, 7] },
   'Grande Mago': { combate: 2, habilidade: 3, noção: 5, vitalidade: 4, magia: 'Todas as magias, mas pode controlar o resultado removendo hits depois que rolar.' },
   'Cão': { combate: 4, habilidade: 3, noção: 2, vitalidade: 2 },
   'Lobo': { combate: 5, habilidade: 4, noção: 3, vitalidade: 4, especial: 'Uivo: Em vez de atacar, pode uivar. Em dois turnos, aparecerá outro lobo.' },
   'Galinha': { combate: 1, habilidade: 2, noção: 1, vitalidade: 1 },
-  'Goblin Comum': { combate: 2, habilidade: 2, noção: 2, vitalidade: 2, equipamento: 'Adaga', bônus: '+1' },
+  'Goblin Comum': { combate: 2, habilidade: 2, noção: 2, vitalidade: 2, equipamento: 'Adaga', bônus: 1 },
 }
 
-// Tabelas para aventuras aleatórias
 export const randomAdventures = [
   'Saquear Viajantes',
   'Sequestrar Pessoa Importante',
@@ -279,7 +246,6 @@ export const randomAdventures = [
   'Invadir Vizinhos',
 ]
 
-// Tabela de inspiração para cenas
 export const inspirationTable = [
   ['Explosões', 'Medo', 'Destruir'],
   ['Madeira', 'Risada', 'Construir'],
@@ -289,7 +255,6 @@ export const inspirationTable = [
   ['Fogo', 'Amor', 'Resistir'],
 ]
 
-// Tabela de itens mágicos
 export const magicItemTypes = {
   1: 'Artefato',
   2: 'Especial',

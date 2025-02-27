@@ -16,14 +16,11 @@ function closeSidebar() {
 </script>
 
 <template>
-  <div class="goblin-container">
-    <!-- Sidebar Toggle Button -->
+  <div class="app">
     <SidebarToggle @toggle="toggleSidebar" />
 
-    <!-- Sidebar Component -->
     <Sidebar :is-open="isSidebarOpen" @close="closeSidebar" />
 
-    <!-- Main Content -->
     <main class="pt-16 transition-all duration-300 ease-in-out" :class="{ 'md:ml-64': isSidebarOpen }">
       <RouterView />
     </main>

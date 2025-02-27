@@ -194,26 +194,25 @@ function toggleImageVisibility() {
 </script>
 
 <template>
-  <div class="main-content">
-    <header class="mb-8 text-center">
-      <h1 class="text-5xl mb-2">
+  <div class="flex flex-col items-center gap-4">
+    <header class="text-center space-y-2">
+      <h1 class="font-bold font-goblin text-goblin-green text-shadow-goblin text-5xl text">
         Goblins Malditos
       </h1>
+
       <p class="text-xl text-goblin-brown">
         Gerador de Goblins Aleatórios
       </p>
     </header>
 
-    <div class="flex flex-col items-center mb-8">
-      <button class="goblin-button mb-4" @click="generateNewGoblin">
-        {{ currentGoblin ? 'Gerar Outro Goblin' : 'Gerar Goblin' }}
-      </button>
+    <button class="goblin-button" @click="generateNewGoblin">
+      {{ currentGoblin ? 'Gerar Outro Goblin' : 'Gerar Goblin' }}
+    </button>
 
-      <p v-if="!currentGoblin" class="text-goblin-brown italic text-sm max-w-md text-center">
-        Clique no botão acima para gerar um goblin aleatório para sua aventura.
-        Cada goblin é único, caótico e provavelmente não vai durar muito tempo!
-      </p>
-    </div>
+    <p v-if="!currentGoblin" class="text-goblin-brown italic text-sm max-w-md text-center">
+      Clique no botão acima para gerar um goblin aleatório para sua aventura.
+      Cada goblin é único, caótico e provavelmente não vai durar muito tempo!
+    </p>
 
     <transition
       enter-active-class="transition duration-500 ease-out"
@@ -224,7 +223,6 @@ function toggleImageVisibility() {
       leave-to-class="opacity-0"
     >
       <div v-if="currentGoblin" class="goblin-display flex flex-col items-center gap-12">
-        <!-- Collapse para a imagem do goblin -->
         <div class="image-collapse-container mb-12">
           <button
             class="collapse-button w-full flex justify-between items-center p-2 bg-goblin-brown hover:bg-goblin-green text-white rounded-t"

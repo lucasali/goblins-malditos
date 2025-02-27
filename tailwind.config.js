@@ -14,7 +14,7 @@ export default {
         'parchment': '#f5e8c9',
       },
       fontFamily: {
-        goblin: ['Comic Sans MS', 'cursive'],
+        goblin: ['Goblin One', 'serif'],
         parchment: ['Papyrus', 'fantasy'],
       },
     },

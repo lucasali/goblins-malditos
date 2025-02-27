@@ -1,3 +1,4 @@
+import { useId } from 'vue'
 import {
   describerModifiers,
   describers,
@@ -17,6 +18,7 @@ import {
 export interface Goblin {
   id: string
   name: string
+  level: number
   occupation: string
   describer: string
   technique: string
@@ -39,7 +41,7 @@ export interface Goblin {
     weaponDetails?: {
       uso: string
       ataque: string
-      bônus: string
+      bônus: number
       especial: string
     }
     armor: string
@@ -55,7 +57,7 @@ export interface Goblin {
     type: 'luck' | 'curse'
     description: string
   }
-  seed?: string // Adicionando campo opcional para a seed
+  seed?: string
 }
 
 // Interface para os índices usados na seed

@@ -2,13 +2,11 @@
 import type { Goblin } from '../services/goblinGenerator'
 import { computed, ref } from 'vue'
 
-// Propriedades do componente
 const props = defineProps<{
   goblin: Goblin
-  canEditAttributes?: boolean // Nova prop para controlar se os atributos podem ser editados
+  canEditAttributes?: boolean
 }>()
 
-// Emitir eventos
 const emit = defineEmits<{
   (e: 'copy'): void
   (e: 'share'): void
@@ -31,83 +29,76 @@ const MAX_ATTRIBUTE = 6
 // Valor padrão para canEditAttributes
 const canEdit = computed(() => props.canEditAttributes ?? false)
 
-// Função para atualizar um atributo
 function updateAttribute(attribute: keyof typeof attributes.value, value: number) {
-  // Se não pode editar, não faz nada
   if (!canEdit.value)
     return
 
-  // Garantir que o valor esteja dentro dos limites
   const newValue = Math.max(MIN_ATTRIBUTE, Math.min(MAX_ATTRIBUTE, value))
   attributes.value[attribute] = newValue
 
-  // Emitir evento para atualizar o goblin no componente pai
   emit('update:attributes', { ...attributes.value })
 }
 
-// Função para copiar o goblin
 function copyGoblin() {
   emit('copy')
 }
 
-// Função para compartilhar o goblin
 function shareGoblin() {
   emit('share')
 }
 
-// Função para alternar a edição de atributos
 function toggleEditAttributes() {
   emit('toggleEdit')
 }
 </script>
 
 <template>
-  <div v-if="goblin" class="goblin-card">
-    <div class="flex justify-between items-start mb-4">
-      <h2 class="text-3xl font-goblin text-goblin-green">
-        {{ goblin.name }}
-      </h2>
-      <div class="flex space-x-2">
-        <button
-          class="action-button"
-          title="Compartilhar Goblin"
-          @click="shareGoblin"
-        >
-          <span class="material-icons">share</span>
-        </button>
-        <button
-          class="action-button"
-          title="Copiar Goblin"
-          @click="copyGoblin"
-        >
-          <span class="material-icons">content_copy</span>
-        </button>
-      </div>
-    </div>
+  <div v-if="goblin" class="bg-parchment text-goblin-dark p-5 rounded-lg shadow-lg border-2 border-goblin-brown transform rotate-1 hover:rotate-0 transition-transform duration-300 ease-in-out md:max-w-2xl">
+    <div class="space-y-6">
+      <div class="space-y-2">
+        <div class="flex justify-between">
+          <h2 class="text-2xl font-bold font-goblin text-goblin-green">
+            {{ goblin.name }}
+          </h2>
 
-    <div class="goblin-sections">
-      <!-- Ocupação e Descritor -->
-      <div class="goblin-section mb-4">
-        <h3 class="text-xl font-goblin text-goblin-green mb-2">
-          Ocupação e Descritor
-        </h3>
-        <div class="goblin-attribute">
-          <span class="goblin-attribute-title">Ocupação:</span> {{ goblin.occupation }}
+          <div class="flex gap-2">
+            <button
+              class="action-button"
+              title="Compartilhar ficha"
+              @click="shareGoblin"
+            >
+              <span class="material-icons">share</span>
+            </button>
+
+            <button
+              class="action-button"
+              title="Copiar ficha"
+              @click="copyGoblin"
+            >
+              <span class="material-icons">content_copy</span>
+            </button>
+          </div>
         </div>
-        <div class="goblin-attribute">
-          <span class="goblin-attribute-title">Descritor:</span> {{ goblin.describer }}
-        </div>
-        <div class="goblin-attribute">
-          <span class="goblin-attribute-title">Técnica:</span> {{ goblin.technique }}
+
+        <div>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Ocupação:</span> {{ goblin.occupation }}
+          </div>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Descritor:</span> {{ goblin.describer }}
+          </div>
+          <div class="goblin-attribute">
+            <span class="goblin-attribute-title">Técnica:</span> {{ goblin.technique }}
+          </div>
         </div>
       </div>
 
-      <!-- Atributos -->
-      <div class="goblin-section mb-4">
+      <div class="goblin-section">
         <div class="flex justify-between items-center mb-2">
           <h3 class="text-xl font-goblin text-goblin-green">
             Atributos
           </h3>
+
           <button
             class="action-button"
             title="Alternar edição de atributos"
@@ -269,8 +260,7 @@ function toggleEditAttributes() {
         </div>
       </div>
 
-      <!-- Características Físicas -->
-      <div class="goblin-section mb-4">
+      <div class="goblin-section">
         <h3 class="text-xl font-goblin text-goblin-green mb-2">
           Características Físicas
         </h3>
@@ -291,8 +281,7 @@ function toggleEditAttributes() {
         </div>
       </div>
 
-      <!-- Personalidade -->
-      <div class="goblin-section mb-4">
+      <div class="goblin-section">
         <h3 class="text-xl font-goblin text-goblin-green mb-2">
           Personalidade
         </h3>
@@ -303,8 +292,7 @@ function toggleEditAttributes() {
         </ul>
       </div>
 
-      <!-- Equipamento -->
-      <div class="goblin-section mb-4">
+      <div class="goblin-section">
         <h3 class="text-xl font-goblin text-goblin-green mb-2">
           Equipamento
         </h3>
@@ -330,8 +318,7 @@ function toggleEditAttributes() {
         </div>
       </div>
 
-      <!-- Magias (se for Bruxo) -->
-      <div v-if="goblin.occupation === 'Bruxo' && goblin.spells && goblin.spells.length > 0" class="goblin-section mb-4">
+      <div v-if="goblin.occupation === 'Bruxo' && goblin.spells && goblin.spells.length > 0" class="goblin-section">
         <h3 class="text-xl font-goblin text-goblin-green mb-2">
           Magias
         </h3>
@@ -342,8 +329,7 @@ function toggleEditAttributes() {
         </ul>
       </div>
 
-      <!-- Sorte/Maldição -->
-      <div v-if="goblin.luckOrCurse" class="goblin-section mb-4">
+      <div v-if="goblin.luckOrCurse" class="goblin-section">
         <h3 class="text-xl font-goblin text-goblin-green mb-2">
           {{ goblin.luckOrCurse.type === 'luck' ? 'Sorte' : 'Maldição' }}
         </h3>
@@ -356,32 +342,14 @@ function toggleEditAttributes() {
 </template>
 
 <style scoped>
-.goblin-card {
-  @apply bg-parchment text-goblin-dark p-5 rounded-lg shadow-lg border-2 border-goblin-brown transform rotate-1 md:max-w-2xl;
-}
-
-.goblin-section {
-  @apply mb-3;
-}
-
-.goblin-section h3 {
-  @apply mb-1.5;
-}
-
-.goblin-attribute {
-  @apply mb-1.5;
-}
-
 .goblin-attribute-title {
   @apply font-bold;
 }
 
-/* Estilos para os botões de ação */
 .action-button {
   @apply w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors;
 }
 
-/* Estilos para os sliders de atributos */
 .attribute-slider {
   @apply mb-3;
 }
@@ -420,42 +388,11 @@ input[type="range"]::-moz-range-thumb {
   @apply opacity-50 cursor-not-allowed;
 }
 
-/* Estilo para sliders desabilitados */
 .disabled-slider {
   @apply opacity-50 cursor-not-allowed;
 }
 
-/* Estilo para a mensagem informativa */
 .attribute-info-message {
   @apply bg-goblin-dark bg-opacity-10 p-2 rounded-md;
-}
-
-/* Estilos específicos para impressão */
-@media print {
-  .goblin-card {
-    border: none;
-    box-shadow: none;
-    transform: none;
-    padding: 1cm;
-    width: 100%;
-    height: 100%;
-    min-height: 29.7cm;
-  }
-
-  .slider-button, input[type="range"], .action-button {
-    display: none;
-  }
-
-  .attribute-info-message {
-    display: none;
-  }
-
-  .goblin-sections {
-    page-break-inside: avoid;
-  }
-
-  .goblin-section {
-    page-break-inside: avoid;
-  }
 }
 </style>
