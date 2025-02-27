@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{vue,js,ts,jsx,tsx}",
+    './index.html',
+    './src/**/*.{vue,js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -14,11 +14,10 @@ export default {
         'parchment': '#f5e8c9',
       },
       fontFamily: {
-        'goblin': ['Comic Sans MS', 'cursive'],
-        'parchment': ['Papyrus', 'fantasy'],
+        goblin: ['Comic Sans MS', 'cursive'],
+        parchment: ['Papyrus', 'fantasy'],
       },
     },
   },
   plugins: [],
 }
-

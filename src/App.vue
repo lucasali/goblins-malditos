@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { RouterView, RouterLink } from 'vue-router';
-import Sidebar from './components/Sidebar.vue';
-import SidebarToggle from './components/SidebarToggle.vue';
+import { ref } from 'vue'
+import { RouterView } from 'vue-router'
+import Sidebar from './components/Sidebar.vue'
+import SidebarToggle from './components/SidebarToggle.vue'
 
-const isSidebarOpen = ref<boolean>(false);
+const isSidebarOpen = ref<boolean>(false)
 
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value;
+function toggleSidebar() {
+  isSidebarOpen.value = !isSidebarOpen.value
 }
 
-const closeSidebar = () => {
-  isSidebarOpen.value = false;
+function closeSidebar() {
+  isSidebarOpen.value = false
 }
 </script>
 
@@ -19,10 +19,10 @@ const closeSidebar = () => {
   <div class="goblin-container">
     <!-- Sidebar Toggle Button -->
     <SidebarToggle @toggle="toggleSidebar" />
-    
+
     <!-- Sidebar Component -->
-    <Sidebar :isOpen="isSidebarOpen" @close="closeSidebar" />
-    
+    <Sidebar :is-open="isSidebarOpen" @close="closeSidebar" />
+
     <!-- Main Content -->
     <main class="pt-16 transition-all duration-300 ease-in-out" :class="{ 'md:ml-64': isSidebarOpen }">
       <RouterView />

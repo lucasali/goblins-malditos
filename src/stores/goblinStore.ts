@@ -1,18 +1,19 @@
-import { defineStore } from "pinia";
-import { generateGoblin, generateGoblinFromSeed, type Goblin } from "../services/goblinGenerator";
-import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import type { Goblin } from '../services/goblinGenerator'
+import { defineStore } from 'pinia'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { generateGoblin, generateGoblinFromSeed } from '../services/goblinGenerator'
 
 export const useGoblinCardStore = defineStore('goblin', () => {
-  const route = useRoute();
-  const router = useRouter();
-  const currentGoblin = ref<Goblin | null>(null);
+  const route = useRoute()
+  const router = useRouter()
+  const currentGoblin = ref<Goblin | null>(null)
 
   onMounted(() => {
-    const seedFromUrl = route.query.seed as string;
+    const seedFromUrl = route.query.seed as string
 
     if (seedFromUrl) {
-      loadGoblinFromSeed(seedFromUrl);
+      loadGoblinFromSeed(seedFromUrl)
     }
   })
 
@@ -20,15 +21,15 @@ export const useGoblinCardStore = defineStore('goblin', () => {
     if (!seed) {
       generateNewGoblin()
     }
-    
-    currentGoblin.value = generateGoblinFromSeed(seed);
+
+    currentGoblin.value = generateGoblinFromSeed(seed)
   }
 
   function generateNewGoblin() {
     currentGoblin.value = generateGoblin()
 
     if (currentGoblin.value && currentGoblin.value.seed) {
-      router.replace({ query: { seed: currentGoblin.value.seed } });
+      router.replace({ query: { seed: currentGoblin.value.seed } })
     }
   }
 
@@ -38,6 +39,6 @@ export const useGoblinCardStore = defineStore('goblin', () => {
 
     // Actions
     loadGoblinFromSeed,
-    generateNewGoblin
+    generateNewGoblin,
   }
 })

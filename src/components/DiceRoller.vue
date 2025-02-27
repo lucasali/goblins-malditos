@@ -1,65 +1,68 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import Dice from './Dice.vue';
-import { useDiceStore } from '../stores/diceStore';
+import { ref } from 'vue'
+import { useDiceStore } from '../stores/diceStore'
+import Dice from './Dice.vue'
 
 // Store do Pinia
-const diceStore = useDiceStore();
+const diceStore = useDiceStore()
 
 // Refs para os componentes de dados
-const diceRefs = ref<Record<number, any>>({});
-const diceContainerRef = ref<HTMLElement | null>(null);
+const diceRefs = ref<Record<number, any>>({})
+const diceContainerRef = ref<HTMLElement | null>(null)
 
 // Método para definir referências aos componentes de dados
-const setDiceRef = (id: number, el: any) => {
+function setDiceRef(id: number, el: any) {
   if (el) {
-    diceRefs.value[id] = el;
+    diceRefs.value[id] = el
   }
-};
+}
 
 // Adicionar classe de animação aos dados quando rolados
-const addRollingAnimation = (id: number) => {
-  const diceElement = document.getElementById(`dice-${id}`);
+function addRollingAnimation(id: number) {
+  const diceElement = document.getElementById(`dice-${id}`)
   if (diceElement) {
     // Escolher uma direção aleatória para a animação
-    const directions = ['shake-1', 'shake-2', 'shake-3', 'shake-4'];
-    const randomDirection = directions[Math.floor(Math.random() * directions.length)];
-    
+    const directions = ['shake-1', 'shake-2', 'shake-3', 'shake-4']
+    const randomDirection = directions[Math.floor(Math.random() * directions.length)]
+
     // Adicionar classe de tremor
-    diceElement.classList.add('shake-dice', randomDirection);
-    
+    diceElement.classList.add('shake-dice', randomDirection)
+
     // Remover as classes após a animação
-    const animationDuration = 0.6;
+    const animationDuration = 0.6
     setTimeout(() => {
-      diceElement.classList.remove('shake-dice', randomDirection);
-    }, animationDuration * 1000 + 50);
+      diceElement.classList.remove('shake-dice', randomDirection)
+    }, animationDuration * 1000 + 50)
   }
-};
+}
 
 // Sobrescrever o método rollDice para adicionar animações
-const rollDice = () => {
-  if (diceStore.isRolling || diceStore.diceList.length === 0) return;
-  
+function rollDice() {
+  if (diceStore.isRolling || diceStore.diceList.length === 0)
+    return
+
   // Usar o método da store para rolar os dados
-  diceStore.rollDice();
-  
+  diceStore.rollDice()
+
   // Adicionar animações a todos os dados
   diceStore.diceList.forEach((dice) => {
-    addRollingAnimation(dice.id);
-  });
-};
+    addRollingAnimation(dice.id)
+  })
+}
 </script>
 
 <template>
   <div class="dice-roller">
     <div class="dice-roller-header">
-      <h3 class="dice-roller-title">Rolador de Dados</h3>
-      
+      <h3 class="dice-roller-title">
+        Rolador de Dados
+      </h3>
+
       <div class="dice-type-selector">
         <label for="dice-type" class="dice-type-label">Tipo:</label>
-        <select 
-          id="dice-type" 
-          v-model="diceStore.selectedDiceType" 
+        <select
+          id="dice-type"
+          v-model="diceStore.selectedDiceType"
           class="dice-type-select"
         >
           <option v-for="faces in diceStore.commonDice" :key="faces" :value="faces">
@@ -68,78 +71,78 @@ const rollDice = () => {
         </select>
       </div>
     </div>
-    
+
     <div class="dice-controls">
-      <button 
-        @click="diceStore.addDice()" 
+      <button
         class="dice-control-button add-button"
         :disabled="diceStore.isRolling"
+        @click="diceStore.addDice()"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
         </svg>
         <span>Adicionar</span>
       </button>
-      
-      <button 
-        @click="diceStore.removeDice()" 
+
+      <button
         class="dice-control-button remove-button"
         :disabled="diceStore.isRolling || diceStore.diceList.length === 0"
+        @click="diceStore.removeDice()"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <line x1="5" y1="12" x2="19" y2="12" />
         </svg>
         <span>Remover</span>
       </button>
-      
-      <button 
-        @click="rollDice" 
+
+      <button
         class="dice-control-button roll-button"
         :disabled="diceStore.isRolling || diceStore.diceList.length === 0"
+        @click="rollDice"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-          <path d="M3 3v5h5"></path>
-          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
-          <path d="M16 21h5v-5"></path>
+          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+          <path d="M3 3v5h5" />
+          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+          <path d="M16 21h5v-5" />
         </svg>
         <span>Rolar</span>
       </button>
-      
-      <button 
+
+      <button
         v-if="diceStore.diceList.length > 0"
-        @click="diceStore.removeAllDice()" 
         class="dice-control-button clear-button"
         :disabled="diceStore.isRolling"
+        @click="diceStore.removeAllDice()"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 6h18"></path>
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <path d="M3 6h18" />
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
         </svg>
         <span>Limpar</span>
       </button>
     </div>
-    
-    <div 
-      v-if="diceStore.diceList.length > 0" 
-      class="dice-container"
+
+    <div
+      v-if="diceStore.diceList.length > 0"
       ref="diceContainerRef"
+      class="dice-container"
     >
       <Dice
         v-for="dice in diceStore.diceList"
         :id="`dice-${dice.id}`"
         :key="dice.id"
+        :ref="el => setDiceRef(dice.id, el)"
         :faces="dice.faces"
         :result="dice.result"
         :selected="dice.selected"
         @select="diceStore.selectDice(dice.id)"
         @roll="(result) => diceStore.setDiceResult(dice.id, result)"
-        :ref="el => setDiceRef(dice.id, el)"
       />
     </div>
-    
+
     <div v-if="diceStore.showResults && diceStore.diceList.length > 0" class="dice-results">
       <div class="dice-notation">
         {{ diceStore.diceNotation }}
@@ -148,7 +151,7 @@ const rollDice = () => {
         Total: <span class="dice-total-value">{{ diceStore.totalResult }}</span>
       </div>
     </div>
-    
+
     <div v-if="diceStore.diceList.length === 0" class="empty-state">
       <p>Adicione dados para começar a rolar!</p>
     </div>
@@ -351,4 +354,4 @@ const rollDice = () => {
 .rolling {
   animation: diceRoll 0.6s ease-in-out;
 } */
-</style> 
+</style>

@@ -1,11 +1,11 @@
 // Tabelas de dados para geração aleatória de goblins baseado no RPG "Malditos Goblins"
 // Autor: Tiago Junges
 
-/* 
+/*
  * Etapa 1: Nome
- * 
- * Você pode inventar ou rolar dois dados na tabela abaixo. 
- * O primeiro dado para a coluna e o segundo para a linha. 
+ *
+ * Você pode inventar ou rolar dois dados na tabela abaixo.
+ * O primeiro dado para a coluna e o segundo para a linha.
  * Você pode dar um segundo nome também para seu goblin ser de família.
  */
 export const goblinNames = [
@@ -14,47 +14,57 @@ export const goblinNames = [
   ['Crash', 'Zzzz', 'Sussa', 'Bibi', 'Boom', 'Bum'],
   ['Spray', 'Cringe', 'Sopa', 'Ovo', 'Ban', 'Nhack'],
   ['Bing', 'Riso', 'Slash', 'Coff', 'Ugh', 'Sniff'],
-  ['[Última coisa que comeu]', '[Inverta seu nome]']
-];
+  ['[Última coisa que comeu]', '[Inverta seu nome]'],
+]
 
-/* 
+/*
  * Etapa 2: Ocupação
- * 
+ *
  * Role dois dados, veja a ocupação e descritor do seu goblin e anote seus atributos
  * e equipamentos na sua ficha.
  */
 export const occupations = [
-  'Mercenário', 'Caçador', 'Gatuno', 'Líder', 'Incendiário', 'Bruxo'
-];
+  'Mercenário',
+  'Caçador',
+  'Gatuno',
+  'Líder',
+  'Incendiário',
+  'Bruxo',
+]
 
 export const describers = [
-  'Covarde', 'Atrapalhado', 'Tapado', 'Fracote', 'Medíocre', 'Supimpa'
-];
+  'Covarde',
+  'Atrapalhado',
+  'Tapado',
+  'Fracote',
+  'Medíocre',
+  'Supimpa',
+]
 
 // Modificadores de atributos por ocupação
 export const occupationModifiers = {
-  'Mercenário': { combate: 1 },
-  'Caçador': { combate: 1 },
-  'Gatuno': { habilidade: 1 },
-  'Líder': { vitalidade: 1 },
-  'Incendiário': { vitalidade: 1 },
-  'Bruxo': { noção: 1 }
-};
+  Mercenário: { combate: 1 },
+  Caçador: { combate: 1 },
+  Gatuno: { habilidade: 1 },
+  Líder: { vitalidade: 1 },
+  Incendiário: { vitalidade: 1 },
+  Bruxo: { noção: 1 },
+}
 
 // Modificadores de atributos por descritor
 export const describerModifiers = {
-  'Covarde': { combate: -1 },
-  'Atrapalhado': { habilidade: -1 },
-  'Tapado': { noção: -1 },
-  'Fracote': { vitalidade: -1 },
-  'Medíocre': { }, // Não altera nada
-  'Supimpa': { escolha: 1 } // Escolha um atributo para ganhar +1
-};
+  Covarde: { combate: -1 },
+  Atrapalhado: { habilidade: -1 },
+  Tapado: { noção: -1 },
+  Fracote: { vitalidade: -1 },
+  Medíocre: { }, // Não altera nada
+  Supimpa: { escolha: 1 }, // Escolha um atributo para ganhar +1
+}
 
-/* 
+/*
  * Etapa 3: Característica
- * 
- * Role dois dados e veja a característica distinta do seu goblin. 
+ *
+ * Role dois dados e veja a característica distinta do seu goblin.
  * O primeiro dado para a coluna e o segundo para a linha.
  */
 export const traits = [
@@ -63,127 +73,133 @@ export const traits = [
   ['Amaldiçoado', 'Linguão', 'Nariz extra', 'Listras', 'Galináceo', 'Colorido'],
   ['Tom bélico', 'Olho gigante', 'Olhos extras', 'Pompom', 'Peixoso', 'Amarelo'],
   ['Flutulência', 'Pés gigantes', 'Braço extra', 'Chifre', 'Felino', 'Azul'],
-  ['[Role 2 vezes]', 'Mão gigante', 'Cabeça extra', 'Cicatrizes', 'Aracnídeo', 'Vermelho']
-];
+  ['[Role 2 vezes]', 'Mão gigante', 'Cabeça extra', 'Cicatrizes', 'Aracnídeo', 'Vermelho'],
+]
 
 // Equipamentos por ocupação
 export const occupationEquipment = {
-  'Mercenário': [
+  Mercenário: [
     ['Espada e Escudo'],
     ['2 Machadinhas'],
-    ['Machadão']
+    ['Machadão'],
   ],
-  'Caçador': [
+  Caçador: [
     ['3 Adagas'],
     ['Arco de Caça'],
-    ['Pistola e Chapéu']
+    ['Pistola e Chapéu'],
   ],
-  'Gatuno': [
+  Gatuno: [
     ['3 Adagas'],
     ['Rapieira e Broquel'],
-    ['Pistola e Chapéu']
+    ['Pistola e Chapéu'],
   ],
-  'Líder': [
+  Líder: [
     ['Espada e Medalhas de Guerra'],
     ['Lança e Elmo'],
-    ['Espadona']
+    ['Espadona'],
   ],
-  'Incendiário': [
+  Incendiário: [
     ['Barril de Pólvora'],
     ['Pistola e Galinha Explosiva'],
-    ['Bacamarte e Chapéu']
+    ['Bacamarte e Chapéu'],
   ],
-  'Bruxo': [
+  Bruxo: [
     ['Cajado'],
     ['Varinha e Cachecol'],
-    ['Vassoura e Chapéu']
-  ]
-};
+    ['Vassoura e Chapéu'],
+  ],
+}
 
 // Técnicas por ocupação e nível
 export const occupationTechniques = {
-  'Mercenário': {
+  Mercenário: {
     1: 'Mestre de Armas: Você sempre rola + dado em todos os ataques que fizer lutando com sua arma favorita.',
     2: 'Ataque Giratório: Sempre que você causar dano a um inimigo com uma arma corporal, pode fazer mais um ataque contra outro inimigo que estiver ao seu alcance.',
-    3: 'Ataque Brutal: Uma vez por dia, você pode declarar um Ataque Brutal. Faça um ataque corporal normalmente com o dobro de dados.'
+    3: 'Ataque Brutal: Uma vez por dia, você pode declarar um Ataque Brutal. Faça um ataque corporal normalmente com o dobro de dados.',
   },
-  'Caçador': {
+  Caçador: {
     1: 'Inimigo: Escolha uma espécie de criatura quando começar o jogo. Você sempre rola + dado em todos os ataques contra essa espécie de criatura.',
     2: 'Rastrear: Você sabe seguir pegadas e identificar a criatura das pegadas.',
-    3: 'Tiro Certeiro: Uma vez por dia, você pode declarar um Tiro Certeiro. Faça um ataque à distância normalmente com o dobro de dados.'
+    3: 'Tiro Certeiro: Uma vez por dia, você pode declarar um Tiro Certeiro. Faça um ataque à distância normalmente com o dobro de dados.',
   },
-  'Gatuno': {
+  Gatuno: {
     1: 'Roubar: Conseguindo 1 hit em um teste de Habilidade, você pode roubar um objeto do bolso de qualquer pessoa sem que ela perceba.',
     2: 'Ataque Furtivo: Você sempre rola 2 dados a mais se fizer um ataque contra um alvo que não sabe onde você está.',
-    3: 'Esconder: Uma vez por dia, você pode se esconder sem precisar fazer um teste. Você estará completamente escondido até se mexer ou emitir som.'
+    3: 'Esconder: Uma vez por dia, você pode se esconder sem precisar fazer um teste. Você estará completamente escondido até se mexer ou emitir som.',
   },
-  'Líder': {
+  Líder: {
     1: 'Grito de Guerra: Uma vez por dia, você pode dar este grito. Faça um teste de Noção e, se conseguir 1 hit, todos os seus aliados ficarão com Combate +1 até o final da batalha.',
     2: 'Humilhação: Uma vez por dia, você pode gritar e xingar um aliado seu que eliminará todos os ferimentos dele.',
-    3: 'Ataque Brutal: Uma vez por dia, você pode declarar um Ataque Brutal. Faça um ataque corporal normalmente com o dobro de dados.'
+    3: 'Ataque Brutal: Uma vez por dia, você pode declarar um Ataque Brutal. Faça um ataque corporal normalmente com o dobro de dados.',
   },
-  'Incendiário': {
+  Incendiário: {
     1: 'Resistência: Você sempre recebe 1 ferimento a menos de ataques de fogo ou tiro de armas de fogo.',
     2: 'Delírio: Você pode se livrar de todos os ferimentos se você explodir ou queimar completamente uma casa ou algo maior que isso.',
-    3: 'Imunidade: Você é imune a fogo.'
+    3: 'Imunidade: Você é imune a fogo.',
   },
-  'Bruxo': {
+  Bruxo: {
     1: 'Magias: Você pode conjurar magias da sua lista (escolha 3 magias). Para conjurar uma magia, faça um teste de Noção e consulte o efeito da magia.',
     2: 'Condutor Mágico: Se você conjurar a magia por uma varinha, cajado ou outro Condutor Mágico, você rola 1 dado a mais.',
-    3: 'Implacável: Uma vez por dia, você pode conjurar uma magia sem rolar os dados, apenas escolhendo o resultado.'
-  }
-};
+    3: 'Implacável: Uma vez por dia, você pode conjurar uma magia sem rolar os dados, apenas escolhendo o resultado.',
+  },
+}
 
 // Lista de magias disponíveis para o Bruxo
 export const spells = [
-  'Fogo', 'Gelo', 'Relâmpago', 'Troca', 'Cura', 'Morte', 'Planta'
-];
+  'Fogo',
+  'Gelo',
+  'Relâmpago',
+  'Troca',
+  'Cura',
+  'Morte',
+  'Planta',
+]
 
 // Efeitos das magias por número de hits
 export const spellEffects = {
-  'Fogo': {
+  Fogo: {
     0: 'Uma explosão queima seu rosto e você recebe 1 ferimento.',
     1: 'Uma bolinha de fogo capaz de iluminar o caminho. Não dá pra arremessá-la.',
     2: 'Uma grande bola de fogo que pode ser usada para iluminar lugares ou ser arremessada, causando automaticamente 3 ferimentos a um alvo visível.',
-    3: 'Uma rajada de fogo engole todas as criaturas à sua frente, incluindo aliados. Todos receberão 4 ferimentos de fogo.'
+    3: 'Uma rajada de fogo engole todas as criaturas à sua frente, incluindo aliados. Todos receberão 4 ferimentos de fogo.',
   },
-  'Gelo': {
+  Gelo: {
     0: 'Um dos seus braços se congela e não pode ser usado até o final do dia.',
     1: 'Um raio de frio atinge um inimigo que recebe 1 ferimento.',
     2: 'Um raio de frio atinge um inimigo que recebe 1 ferimento e não poderá agir no seu próximo turno.',
-    3: 'Todas as criaturas visíveis, incluindo aliados, ficam completamente congelados por alguns minutos (mas estarão conscientes embaixo do gelo).'
+    3: 'Todas as criaturas visíveis, incluindo aliados, ficam completamente congelados por alguns minutos (mas estarão conscientes embaixo do gelo).',
   },
-  'Relâmpago': {
+  Relâmpago: {
     0: 'Um relâmpago cai em cima de você e causa 1 ferimento.',
     1: 'Um relâmpago cai em um inimigo à sua escolha e causa 1 ferimento.',
     2: 'Um relâmpago cai em até 4 inimigos à sua escolha e causa 1 ferimento em cada um.',
-    3: 'Uma tempestade se forma no céu. Relâmpagos caem aleatoriamente até o final da batalha.'
+    3: 'Uma tempestade se forma no céu. Relâmpagos caem aleatoriamente até o final da batalha.',
   },
-  'Troca': {
+  Troca: {
     0: 'Sua roupa é trocada pela roupa de outro personagem aleatório.',
     1: 'Você desaparece e aparece em um local à sua escolha. Suas roupas e pertences ficam para trás.',
     2: 'Você desaparece e aparece em um local à sua escolha. Suas roupas e pertences vão junto.',
-    3: 'Você desaparece e aparece em um local aleatório desconhecido.'
+    3: 'Você desaparece e aparece em um local aleatório desconhecido.',
   },
-  'Cura': {
+  Cura: {
     0: 'Sua pele fica pálida e você fica tonto. Perca 1 de Vitalidade até o final do dia.',
     1: 'Um aliado ao seu toque remove 1 ferimento.',
     2: 'Um aliado ao seu toque remove todos seus ferimentos.',
-    3: 'Todas as criaturas visíveis, incluindo inimigos, removem todos seus ferimentos.'
+    3: 'Todas as criaturas visíveis, incluindo inimigos, removem todos seus ferimentos.',
   },
-  'Morte': {
+  Morte: {
     0: 'Sua pele cai e você vira um esqueleto ambulante. Perca permanentemente 1 de Habilidade e 1 de Vitalidade.',
     1: 'Você pode animar um esqueleto que esteja inteiro. Ele lutará para você por 2 turnos.',
     2: 'Você pode animar um esqueleto que esteja inteiro. Ele lutará para você até o final da batalha.',
-    3: 'Todos os esqueletos a até 10 metros de você ganham vida e começam a dançar por 1 hora.'
+    3: 'Todos os esqueletos a até 10 metros de você ganham vida e começam a dançar por 1 hora.',
   },
-  'Planta': {
+  Planta: {
     0: 'Nascem folhas e flores por todo o seu corpo.',
     1: 'Você cria plantas ou arbustos com o seu toque na terra.',
     2: 'Você pode criar plantas ou arbustos em qualquer lugar visível. Você pode usar isso para prender os pés de inimigos.',
-    3: 'Surge um matagal cheio de plantas à sua volta (raio de 5 metros de você).'
-  }
-};
+    3: 'Surge um matagal cheio de plantas à sua volta (raio de 5 metros de você).',
+  },
+}
 
 // Armas e seus atributos
 export const weapons = {
@@ -207,8 +223,8 @@ export const weapons = {
   'Pistola': { uso: 'Uma mão', ataque: 'Distância', bônus: '+2d', especial: 'Recarga; Munição [5]' },
   'Rapieira': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+2d', especial: '' },
   'Varinha': { uso: 'Uma mão', ataque: 'Corporal', bônus: '+0d', especial: 'Condutor Mágico' },
-  'Vassoura': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+1d', especial: 'Condutor Mágico' }
-};
+  'Vassoura': { uso: 'Duas mãos', ataque: 'Corporal', bônus: '+1d', especial: 'Condutor Mágico' },
+}
 
 // Proteções e seus atributos
 export const protections = {
@@ -221,8 +237,8 @@ export const protections = {
   'Panela': { uso: 'Cabeça', durabilidade: 1, especial: '' },
   'Peitoral': { uso: 'Tronco', durabilidade: 3, especial: '' },
   'Penico': { uso: 'Cabeça', durabilidade: 1, especial: 'Sorte' },
-  'Tampa de Panela': { uso: 'Uma mão', durabilidade: 1, especial: '' }
-};
+  'Tampa de Panela': { uso: 'Uma mão', durabilidade: 1, especial: '' },
+}
 
 // Equipamentos diversos
 export const miscEquipment = {
@@ -236,8 +252,8 @@ export const miscEquipment = {
   'Livro Estranho': 'O que dá pra fazer? Não sei. Aquele que conseguir 2 hits em um teste de Noção pode conseguir ler. Existe 1 chance em 6 de ser um livro de magia. Se for, sorteie uma magia da lista.',
   'Roupa Chique': 'Um goblin nojento vestindo isso ainda fica parecendo um goblin nojento, mas pelo menos ajuda a melhorar a autoestima dele.',
   'Tenda': 'Tenda grande para até 5 goblins (10 se não se importarem de ficar empilhados).',
-  'Veneno': 'Pode colocar na bebida de alguém. Aquele que beber receberá 1 ferimento por minuto.'
-};
+  'Veneno': 'Pode colocar na bebida de alguém. Aquele que beber receberá 1 ferimento por minuto.',
+}
 
 // Tabela de inimigos comuns
 export const enemies = {
@@ -251,8 +267,8 @@ export const enemies = {
   'Cão': { combate: 4, habilidade: 3, noção: 2, vitalidade: 2 },
   'Lobo': { combate: 5, habilidade: 4, noção: 3, vitalidade: 4, especial: 'Uivo: Em vez de atacar, pode uivar. Em dois turnos, aparecerá outro lobo.' },
   'Galinha': { combate: 1, habilidade: 2, noção: 1, vitalidade: 1 },
-  'Goblin Comum': { combate: 2, habilidade: 2, noção: 2, vitalidade: 2, equipamento: 'Adaga', bônus: '+1' }
-};
+  'Goblin Comum': { combate: 2, habilidade: 2, noção: 2, vitalidade: 2, equipamento: 'Adaga', bônus: '+1' },
+}
 
 // Tabelas para aventuras aleatórias
 export const randomAdventures = [
@@ -260,8 +276,8 @@ export const randomAdventures = [
   'Sequestrar Pessoa Importante',
   'Saquear Casa Humana',
   'Proteger Masmorra',
-  'Invadir Vizinhos'
-];
+  'Invadir Vizinhos',
+]
 
 // Tabela de inspiração para cenas
 export const inspirationTable = [
@@ -270,8 +286,8 @@ export const inspirationTable = [
   ['Vento', 'Dança', 'Aparecer'],
   ['Terra', 'Força', 'Atacar'],
   ['Água', 'Tranquilidade', 'Mudar'],
-  ['Fogo', 'Amor', 'Resistir']
-];
+  ['Fogo', 'Amor', 'Resistir'],
+]
 
 // Tabela de itens mágicos
 export const magicItemTypes = {
@@ -280,40 +296,40 @@ export const magicItemTypes = {
   3: 'Especial',
   4: 'Estranho',
   5: 'Estranho',
-  6: 'Porcaria'
-};
+  6: 'Porcaria',
+}
 
 export const magicItems = {
-  'Artefato': [
+  Artefato: [
     'Espada Destruidora de Mundos',
     'Martelo do Poder',
     'Coroa do Rei Feiticeiro',
     'Estatueta do Deus Serpente',
     'Ombreiras do Lorde Anão',
-    'Necronomicon'
+    'Necronomicon',
   ],
-  'Especial': [
+  Especial: [
     'Poção',
     'Bracelete Mágico',
     'Tocha Mágica',
     'Espada Brilhante',
     'Adaga Matadora',
-    'Anel Mágico'
+    'Anel Mágico',
   ],
-  'Estranho': [
+  Estranho: [
     'Latinhas sem Fio',
     'Piranha Empalhada',
     'Escudo Falante',
     'Corda-Serpente',
     'Cinto que Cai pra Cima',
-    'Relógio Tic-Ploc'
+    'Relógio Tic-Ploc',
   ],
-  'Porcaria': [
+  Porcaria: [
     'Torta Deliciosa',
     'Maçã Cheirosa',
     'Elmo-Cadeira',
     'Dentes Postiços',
     'Sandália da Vayanna',
-    'Peteca'
-  ]
-}; 
+    'Peteca',
+  ],
+}

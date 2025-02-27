@@ -1,75 +1,75 @@
 <script setup lang="ts">
-import { ref, computed, defineExpose } from 'vue';
-import { rollDie } from '../services/diceService';
+import { computed, defineExpose, ref } from 'vue'
+import { rollDie } from '../services/diceService'
 
 // Props
 const props = defineProps({
   faces: {
     type: Number,
     required: true,
-    validator: (value: number) => [4, 6, 8, 10, 12, 20, 100].includes(value)
+    validator: (value: number) => [4, 6, 8, 10, 12, 20, 100].includes(value),
   },
   result: {
     type: Number as () => number | null | undefined,
-    default: undefined as number | undefined | null
+    default: undefined as number | undefined | null,
   },
   selected: {
     type: Boolean,
-    default: false
-  }
-});
+    default: false,
+  },
+})
 
 // Emits
-const emit = defineEmits(['roll', 'select']);
+const emit = defineEmits(['roll', 'select'])
 
 // State
-const isRolling = ref(false);
+const isRolling = ref(false)
 
 // Computed
-const diceLabel = computed(() => `d${props.faces}`);
-const diceClass = computed(() => `dice-d${props.faces}`);
-const hasResult = computed(() => props.result !== null && props.result !== undefined);
+const diceLabel = computed(() => `d${props.faces}`)
+const diceClass = computed(() => `dice-d${props.faces}`)
+const hasResult = computed(() => props.result !== null && props.result !== undefined)
 
 // Methods
-const handleClick = () => {
-  emit('select');
-};
+function handleClick() {
+  emit('select')
+}
 
-const rollDice = () => {
-  if (isRolling.value) return;
-  
-  isRolling.value = true;
-  
+function rollDice() {
+  if (isRolling.value)
+    return
+
+  isRolling.value = true
+
   // Animate the dice roll
-  const animationDuration = 600; // ms
-  const animationSteps = 8;
-  const stepDuration = animationDuration / animationSteps;
-  
-  let step = 0;
+  const animationDuration = 600 // ms
+  const animationSteps = 8
+  const stepDuration = animationDuration / animationSteps
+
+  let step = 0
   const interval = setInterval(() => {
-    const randomResult = rollDie(props.faces);
-    emit('roll', randomResult);
-    
-    step++;
+    const randomResult = rollDie(props.faces)
+    emit('roll', randomResult)
+
+    step++
     if (step >= animationSteps) {
-      clearInterval(interval);
-      isRolling.value = false;
+      clearInterval(interval)
+      isRolling.value = false
     }
-  }, stepDuration);
-};
+  }, stepDuration)
+}
 
 // Expose methods to parent component
 defineExpose({
-  rollDice
-});
+  rollDice,
+})
 </script>
 
 <template>
-  <div 
-    :class="[
-      'dice', 
-      diceClass, 
-      { 'selected': selected, 'has-result': hasResult }
+  <div
+    class="dice" :class="[
+      diceClass,
+      { 'selected': selected, 'has-result': hasResult },
     ]"
     @click="handleClick"
   >
@@ -235,4 +235,4 @@ defineExpose({
   75% { transform: rotateX(270deg) rotateY(135deg); }
   100% { transform: rotateX(360deg) rotateY(180deg); }
 } */
-</style> 
+</style>

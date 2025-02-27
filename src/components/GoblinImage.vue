@@ -1,169 +1,183 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { Goblin } from '../services/goblinGenerator';
-import { generateGoblinImage, getPlaceholderImage } from '../services/imageGenerator';
+import type { Goblin } from '../services/goblinGenerator'
+import { ref } from 'vue'
+import { generateGoblinImage, getPlaceholderImage } from '../services/imageGenerator'
 
 // Propriedades do componente
 const props = defineProps<{
-  goblin: Goblin;
-  apiKey: string;
-}>();
+  goblin: Goblin
+  apiKey: string
+}>()
 
 // Estado para armazenar a URL da imagem
-const imageUrl = ref<string>('');
-const isLoading = ref<boolean>(false);
-const error = ref<string | null>(null);
-const isFullscreen = ref<boolean>(false);
+const imageUrl = ref<string>('')
+const isLoading = ref<boolean>(false)
+const error = ref<string | null>(null)
+const isFullscreen = ref<boolean>(false)
 
 // Função para gerar a imagem
-const generateImage = async () => {
-  if (!props.goblin) return;
-  
+async function generateImage() {
+  if (!props.goblin)
+    return
+
   // Resetar estados
-  error.value = null;
-  isLoading.value = true;
-  
+  error.value = null
+  isLoading.value = true
+
   // Se não tiver API key, usar placeholder
   if (!props.apiKey) {
-    imageUrl.value = getPlaceholderImage(props.goblin);
-    isLoading.value = false;
-    error.value = 'Chave de API não fornecida. Usando imagem de placeholder.';
-    return;
+    imageUrl.value = getPlaceholderImage(props.goblin)
+    isLoading.value = false
+    error.value = 'Chave de API não fornecida. Usando imagem de placeholder.'
+    return
   }
-  
+
   try {
     // Mensagem de carregamento mais informativa
     const loadingMessages = [
       'Criando ficha do goblin...',
       'Isso pode levar até 30 segundos...',
       'O DALL-E 3 está desenhando sua ficha...',
-      'Quase lá...'
-    ];
-    
-    let messageIndex = 0;
+      'Quase lá...',
+    ]
+
+    let messageIndex = 0
     const loadingInterval = setInterval(() => {
       if (isLoading.value) {
-        const loadingElement = document.querySelector('.loading-message');
+        const loadingElement = document.querySelector('.loading-message')
         if (loadingElement) {
-          loadingElement.textContent = loadingMessages[messageIndex % loadingMessages.length];
+          loadingElement.textContent = loadingMessages[messageIndex % loadingMessages.length]
         }
-        messageIndex++;
-      } else {
-        clearInterval(loadingInterval);
+        messageIndex++
       }
-    }, 5000);
-    
-    const result = await generateGoblinImage(props.goblin, props.apiKey);
-    
-    clearInterval(loadingInterval);
-    
+      else {
+        clearInterval(loadingInterval)
+      }
+    }, 5000)
+
+    const result = await generateGoblinImage(props.goblin, props.apiKey)
+
+    clearInterval(loadingInterval)
+
     if (result.error) {
       // Verificar se é um erro de violação de política de conteúdo
-      if (result.error.includes('content_policy_violation') || 
-          result.error.includes('safety system') || 
-          result.error.includes('policy')) {
-        error.value = 'Erro na geração da imagem. Estamos usando o DALL-E 3 com um prompt específico para fichas de personagem. Tente gerar outro goblin ou regenerar a imagem.';
-      } else if (result.error.includes('billing')) {
-        error.value = 'Erro de cobrança na API da OpenAI. Verifique se sua conta tem créditos suficientes para usar o DALL-E 3.';
-      } else {
-        error.value = result.error;
+      if (result.error.includes('content_policy_violation')
+        || result.error.includes('safety system')
+        || result.error.includes('policy')) {
+        error.value = 'Erro na geração da imagem. Estamos usando o DALL-E 3 com um prompt específico para fichas de personagem. Tente gerar outro goblin ou regenerar a imagem.'
       }
-      imageUrl.value = getPlaceholderImage(props.goblin);
-    } else {
-      imageUrl.value = result.url;
-      error.value = null; // Limpar qualquer erro anterior em caso de sucesso
+      else if (result.error.includes('billing')) {
+        error.value = 'Erro de cobrança na API da OpenAI. Verifique se sua conta tem créditos suficientes para usar o DALL-E 3.'
+      }
+      else {
+        error.value = result.error
+      }
+      imageUrl.value = getPlaceholderImage(props.goblin)
     }
-  } catch (e) {
-    error.value = 'Erro ao gerar imagem. Tente novamente ou gere outro goblin.';
-    imageUrl.value = getPlaceholderImage(props.goblin);
-  } finally {
-    isLoading.value = false;
+    else {
+      imageUrl.value = result.url
+      error.value = null // Limpar qualquer erro anterior em caso de sucesso
+    }
   }
-};
+  catch (e) {
+    console.error('Erro ao gerar imagem:', e)
+    error.value = 'Erro ao gerar imagem. Tente novamente ou gere outro goblin.'
+    imageUrl.value = getPlaceholderImage(props.goblin)
+  }
+  finally {
+    isLoading.value = false
+  }
+}
 
 // Função para alternar o modo de tela cheia da imagem
-const toggleFullscreen = () => {
-  isFullscreen.value = !isFullscreen.value;
-};
+function toggleFullscreen() {
+  isFullscreen.value = !isFullscreen.value
+}
 
 // Função para baixar a imagem
-const downloadImage = async () => {
-  if (!imageUrl.value) return;
-  
+async function downloadImage() {
+  if (!imageUrl.value)
+    return
+
   try {
     // Buscar a imagem como blob
-    const response = await fetch(imageUrl.value);
-    const blob = await response.blob();
-    
+    const response = await fetch(imageUrl.value)
+    const blob = await response.blob()
+
     // Criar URL para o blob
-    const blobUrl = URL.createObjectURL(blob);
-    
+    const blobUrl = URL.createObjectURL(blob)
+
     // Criar link para download
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = `ficha_${props.goblin.name.replace(/\s+/g, '_').toLowerCase()}.png`;
-    
+    const link = document.createElement('a')
+    link.href = blobUrl
+    link.download = `ficha_${props.goblin.name.replace(/\s+/g, '_').toLowerCase()}.png`
+
     // Adicionar o link ao documento, clicar nele e removê-lo
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
     // Liberar a URL do blob
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-  } catch (e) {
-    console.error('Erro ao baixar imagem:', e);
-    error.value = 'Erro ao baixar a imagem. Tente novamente.';
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 100)
   }
-};
+  catch (e) {
+    console.error('Erro ao baixar imagem:', e)
+    error.value = 'Erro ao baixar a imagem. Tente novamente.'
+  }
+}
 </script>
 
 <template>
   <div class="goblin-image-container">
     <div v-if="isLoading" class="loading-container">
-      <div class="loading-spinner"></div>
-      <p class="loading-message text-goblin-brown mt-2">Criando ficha do goblin...</p>
-      <p class="text-goblin-gray text-xs mt-1">Usando DALL-E 3 para resultados melhores</p>
+      <div class="loading-spinner" />
+      <p class="loading-message text-goblin-brown mt-2">
+        Criando ficha do goblin...
+      </p>
+      <p class="text-goblin-gray text-xs mt-1">
+        Usando DALL-E 3 para resultados melhores
+      </p>
     </div>
-    
+
     <div v-else-if="imageUrl" class="image-container">
-      <img 
-        :src="imageUrl" 
-        :alt="goblin.name" 
+      <img
+        :src="imageUrl"
+        :alt="goblin.name"
         class="goblin-image"
         @error="error = 'Erro ao carregar imagem'; imageUrl = getPlaceholderImage(goblin)"
         @click="toggleFullscreen"
-      />
-      
+      >
+
       <div class="image-controls mt-2 flex space-x-2 justify-center">
-        <button 
-          @click="generateImage" 
+        <button
           class="text-sm bg-goblin-brown hover:bg-goblin-green px-2 py-1 rounded"
           :disabled="isLoading"
+          @click="generateImage"
         >
           Regenerar Ficha
         </button>
-        
-        <button 
-          @click="toggleFullscreen" 
+
+        <button
           class="text-sm bg-goblin-brown hover:bg-goblin-green px-2 py-1 rounded"
+          @click="toggleFullscreen"
         >
           {{ isFullscreen ? 'Fechar' : 'Ampliar' }}
         </button>
-        
-        <button 
-          @click="downloadImage" 
+
+        <button
           class="text-sm bg-goblin-brown hover:bg-goblin-green px-2 py-1 rounded"
           :disabled="isLoading || !imageUrl"
+          @click="downloadImage"
         >
           Baixar Ficha
         </button>
       </div>
-      
+
       <div v-if="error" class="error-message text-sm text-red-500 mt-2">
         {{ error }}
       </div>
     </div>
-    
+
     <!-- Área para quando não há imagem gerada -->
     <div v-else class="no-image-container">
       <p class="text-goblin-brown mb-4 text-center">
@@ -171,39 +185,41 @@ const downloadImage = async () => {
         <br>
         <span class="text-xs text-goblin-gray">Isso usará a API da OpenAI (DALL-E 3) e pode custar aproximadamente $0.04 USD.</span>
       </p>
-      
-      <button 
-        @click="generateImage" 
+
+      <button
         class="goblin-button"
         :disabled="isLoading"
+        @click="generateImage"
       >
         Gerar imagem com IA
       </button>
-      
+
       <div v-if="error" class="error-message text-sm text-red-500 mt-4">
         {{ error }}
       </div>
     </div>
-    
+
     <!-- Modal de tela cheia para a imagem -->
     <div v-if="isFullscreen && imageUrl" class="fullscreen-modal" @click="toggleFullscreen">
       <div class="fullscreen-content" @click.stop>
-        <button class="close-button" @click="toggleFullscreen">×</button>
-        <img 
-          :src="imageUrl" 
-          :alt="goblin.name" 
+        <button class="close-button" @click="toggleFullscreen">
+          ×
+        </button>
+        <img
+          :src="imageUrl"
+          :alt="goblin.name"
           class="fullscreen-image"
-        />
+        >
         <div class="fullscreen-controls mt-4 flex justify-center space-x-4">
-          <button 
-            @click="downloadImage" 
+          <button
             class="bg-goblin-brown hover:bg-goblin-green px-3 py-2 rounded text-white"
+            @click="downloadImage"
           >
             Baixar Ficha
           </button>
-          <button 
-            @click="toggleFullscreen" 
+          <button
             class="bg-goblin-gray hover:bg-goblin-brown px-3 py-2 rounded text-white"
+            @click="toggleFullscreen"
           >
             Fechar
           </button>
@@ -286,19 +302,19 @@ const downloadImage = async () => {
     flex-direction: column;
     justify-content: flex-start;
   }
-  
+
   .no-image-container {
     height: 100%;
     min-height: 400px;
   }
-  
+
   .goblin-image {
     max-height: 500px;
     width: 100%;
     object-fit: contain;
     transform: rotate(1deg); /* Rotação oposta à ficha */
   }
-  
+
   .goblin-image:hover {
     transform: rotate(0deg) scale(1.02);
   }
@@ -308,4 +324,4 @@ const downloadImage = async () => {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-</style> 
+</style>

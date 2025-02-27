@@ -1,81 +1,84 @@
 <script setup lang="ts">
-import type { Goblin } from '../services/goblinGenerator';
-import { ref, computed } from 'vue';
+import type { Goblin } from '../services/goblinGenerator'
+import { computed, ref } from 'vue'
 
 // Propriedades do componente
 const props = defineProps<{
-  goblin: Goblin;
-  canEditAttributes?: boolean; // Nova prop para controlar se os atributos podem ser editados
-}>();
+  goblin: Goblin
+  canEditAttributes?: boolean // Nova prop para controlar se os atributos podem ser editados
+}>()
 
 // Emitir eventos
 const emit = defineEmits<{
-  (e: 'copy'): void;
-  (e: 'share'): void;
-  (e: 'toggle-edit'): void;
-  (e: 'update:attributes', attributes: { combate: number; habilidade: number; noção: number; vitalidade: number }): void;
-}>();
+  (e: 'copy'): void
+  (e: 'share'): void
+  (e: 'toggleEdit'): void
+  (e: 'update:attributes', attributes: { combate: number, habilidade: number, noção: number, vitalidade: number }): void
+}>()
 
 // Criar cópias locais dos atributos para manipulação
 const attributes = ref({
   combate: props.goblin.attributes.combate,
   habilidade: props.goblin.attributes.habilidade,
   noção: props.goblin.attributes.noção,
-  vitalidade: props.goblin.attributes.vitalidade
-});
+  vitalidade: props.goblin.attributes.vitalidade,
+})
 
 // Limites para os atributos
-const MIN_ATTRIBUTE = 1;
-const MAX_ATTRIBUTE = 6;
+const MIN_ATTRIBUTE = 1
+const MAX_ATTRIBUTE = 6
 
 // Valor padrão para canEditAttributes
-const canEdit = computed(() => props.canEditAttributes ?? false);
+const canEdit = computed(() => props.canEditAttributes ?? false)
 
 // Função para atualizar um atributo
-const updateAttribute = (attribute: keyof typeof attributes.value, value: number) => {
+function updateAttribute(attribute: keyof typeof attributes.value, value: number) {
   // Se não pode editar, não faz nada
-  if (!canEdit.value) return;
-  
+  if (!canEdit.value)
+    return
+
   // Garantir que o valor esteja dentro dos limites
-  const newValue = Math.max(MIN_ATTRIBUTE, Math.min(MAX_ATTRIBUTE, value));
-  attributes.value[attribute] = newValue;
-  
+  const newValue = Math.max(MIN_ATTRIBUTE, Math.min(MAX_ATTRIBUTE, value))
+  attributes.value[attribute] = newValue
+
   // Emitir evento para atualizar o goblin no componente pai
-  emit('update:attributes', { ...attributes.value });
-};
+  emit('update:attributes', { ...attributes.value })
+}
 
 // Função para copiar o goblin
-const copyGoblin = () => {
-  emit('copy');
-};
+function copyGoblin() {
+  emit('copy')
+}
 
 // Função para compartilhar o goblin
-const shareGoblin = () => {
-  emit('share');
-};
+function shareGoblin() {
+  emit('share')
+}
 
 // Função para alternar a edição de atributos
-const toggleEditAttributes = () => {
-  emit('toggle-edit');
-};
+function toggleEditAttributes() {
+  emit('toggleEdit')
+}
 </script>
 
 <template>
-  <div class="goblin-card" v-if="goblin">
+  <div v-if="goblin" class="goblin-card">
     <div class="flex justify-between items-start mb-4">
-      <h2 class="text-3xl font-goblin text-goblin-green">{{ goblin.name }}</h2>
+      <h2 class="text-3xl font-goblin text-goblin-green">
+        {{ goblin.name }}
+      </h2>
       <div class="flex space-x-2">
-        <button 
-          @click="shareGoblin" 
+        <button
           class="action-button"
           title="Compartilhar Goblin"
+          @click="shareGoblin"
         >
           <span class="material-icons">share</span>
         </button>
-        <button 
-          @click="copyGoblin" 
+        <button
           class="action-button"
           title="Copiar Goblin"
+          @click="copyGoblin"
         >
           <span class="material-icons">content_copy</span>
         </button>
@@ -85,7 +88,9 @@ const toggleEditAttributes = () => {
     <div class="goblin-sections">
       <!-- Ocupação e Descritor -->
       <div class="goblin-section mb-4">
-        <h3 class="text-xl font-goblin text-goblin-green mb-2">Ocupação e Descritor</h3>
+        <h3 class="text-xl font-goblin text-goblin-green mb-2">
+          Ocupação e Descritor
+        </h3>
         <div class="goblin-attribute">
           <span class="goblin-attribute-title">Ocupação:</span> {{ goblin.occupation }}
         </div>
@@ -100,16 +105,18 @@ const toggleEditAttributes = () => {
       <!-- Atributos -->
       <div class="goblin-section mb-4">
         <div class="flex justify-between items-center mb-2">
-          <h3 class="text-xl font-goblin text-goblin-green">Atributos</h3>
-          <button 
-            @click="toggleEditAttributes" 
+          <h3 class="text-xl font-goblin text-goblin-green">
+            Atributos
+          </h3>
+          <button
             class="action-button"
             title="Alternar edição de atributos"
+            @click="toggleEditAttributes"
           >
             <span class="material-icons">{{ canEdit ? 'lock_open' : 'lock' }}</span>
           </button>
         </div>
-        
+
         <!-- Combate -->
         <div class="goblin-attribute attribute-slider">
           <div class="flex justify-between items-center mb-1">
@@ -117,35 +124,35 @@ const toggleEditAttributes = () => {
             <span class="attribute-value">{{ attributes.combate }}</span>
           </div>
           <div class="slider-container">
-            <button 
-              @click="updateAttribute('combate', attributes.combate - 1)" 
-              class="slider-button" 
+            <button
+              class="slider-button"
               :disabled="!canEdit || attributes.combate <= MIN_ATTRIBUTE"
-              :class="{ 'disabled': !canEdit || attributes.combate <= MIN_ATTRIBUTE }"
+              :class="{ disabled: !canEdit || attributes.combate <= MIN_ATTRIBUTE }"
+              @click="updateAttribute('combate', attributes.combate - 1)"
             >
               -
             </button>
-            <input 
-              type="range" 
-              min="1" 
-              max="6" 
-              v-model.number="attributes.combate" 
-              @input="updateAttribute('combate', attributes.combate)"
+            <input
+              v-model.number="attributes.combate"
+              type="range"
+              min="1"
+              max="6"
               class="attribute-slider"
               :disabled="!canEdit"
               :class="{ 'disabled-slider': !canEdit }"
-            />
-            <button 
-              @click="updateAttribute('combate', attributes.combate + 1)" 
-              class="slider-button" 
+              @input="updateAttribute('combate', attributes.combate)"
+            >
+            <button
+              class="slider-button"
               :disabled="!canEdit || attributes.combate >= MAX_ATTRIBUTE"
-              :class="{ 'disabled': !canEdit || attributes.combate >= MAX_ATTRIBUTE }"
+              :class="{ disabled: !canEdit || attributes.combate >= MAX_ATTRIBUTE }"
+              @click="updateAttribute('combate', attributes.combate + 1)"
             >
               +
             </button>
           </div>
         </div>
-        
+
         <!-- Habilidade -->
         <div class="goblin-attribute attribute-slider">
           <div class="flex justify-between items-center mb-1">
@@ -153,35 +160,35 @@ const toggleEditAttributes = () => {
             <span class="attribute-value">{{ attributes.habilidade }}</span>
           </div>
           <div class="slider-container">
-            <button 
-              @click="updateAttribute('habilidade', attributes.habilidade - 1)" 
-              class="slider-button" 
+            <button
+              class="slider-button"
               :disabled="!canEdit || attributes.habilidade <= MIN_ATTRIBUTE"
-              :class="{ 'disabled': !canEdit || attributes.habilidade <= MIN_ATTRIBUTE }"
+              :class="{ disabled: !canEdit || attributes.habilidade <= MIN_ATTRIBUTE }"
+              @click="updateAttribute('habilidade', attributes.habilidade - 1)"
             >
               -
             </button>
-            <input 
-              type="range" 
-              min="1" 
-              max="6" 
-              v-model.number="attributes.habilidade" 
-              @input="updateAttribute('habilidade', attributes.habilidade)"
+            <input
+              v-model.number="attributes.habilidade"
+              type="range"
+              min="1"
+              max="6"
               class="attribute-slider"
               :disabled="!canEdit"
               :class="{ 'disabled-slider': !canEdit }"
-            />
-            <button 
-              @click="updateAttribute('habilidade', attributes.habilidade + 1)" 
-              class="slider-button" 
+              @input="updateAttribute('habilidade', attributes.habilidade)"
+            >
+            <button
+              class="slider-button"
               :disabled="!canEdit || attributes.habilidade >= MAX_ATTRIBUTE"
-              :class="{ 'disabled': !canEdit || attributes.habilidade >= MAX_ATTRIBUTE }"
+              :class="{ disabled: !canEdit || attributes.habilidade >= MAX_ATTRIBUTE }"
+              @click="updateAttribute('habilidade', attributes.habilidade + 1)"
             >
               +
             </button>
           </div>
         </div>
-        
+
         <!-- Noção -->
         <div class="goblin-attribute attribute-slider">
           <div class="flex justify-between items-center mb-1">
@@ -189,35 +196,35 @@ const toggleEditAttributes = () => {
             <span class="attribute-value">{{ attributes.noção }}</span>
           </div>
           <div class="slider-container">
-            <button 
-              @click="updateAttribute('noção', attributes.noção - 1)" 
-              class="slider-button" 
+            <button
+              class="slider-button"
               :disabled="!canEdit || attributes.noção <= MIN_ATTRIBUTE"
-              :class="{ 'disabled': !canEdit || attributes.noção <= MIN_ATTRIBUTE }"
+              :class="{ disabled: !canEdit || attributes.noção <= MIN_ATTRIBUTE }"
+              @click="updateAttribute('noção', attributes.noção - 1)"
             >
               -
             </button>
-            <input 
-              type="range" 
-              min="1" 
-              max="6" 
-              v-model.number="attributes.noção" 
-              @input="updateAttribute('noção', attributes.noção)"
+            <input
+              v-model.number="attributes.noção"
+              type="range"
+              min="1"
+              max="6"
               class="attribute-slider"
               :disabled="!canEdit"
               :class="{ 'disabled-slider': !canEdit }"
-            />
-            <button 
-              @click="updateAttribute('noção', attributes.noção + 1)" 
-              class="slider-button" 
+              @input="updateAttribute('noção', attributes.noção)"
+            >
+            <button
+              class="slider-button"
               :disabled="!canEdit || attributes.noção >= MAX_ATTRIBUTE"
-              :class="{ 'disabled': !canEdit || attributes.noção >= MAX_ATTRIBUTE }"
+              :class="{ disabled: !canEdit || attributes.noção >= MAX_ATTRIBUTE }"
+              @click="updateAttribute('noção', attributes.noção + 1)"
             >
               +
             </button>
           </div>
         </div>
-        
+
         <!-- Vitalidade -->
         <div class="goblin-attribute attribute-slider">
           <div class="flex justify-between items-center mb-1">
@@ -225,35 +232,35 @@ const toggleEditAttributes = () => {
             <span class="attribute-value">{{ attributes.vitalidade }}</span>
           </div>
           <div class="slider-container">
-            <button 
-              @click="updateAttribute('vitalidade', attributes.vitalidade - 1)" 
-              class="slider-button" 
+            <button
+              class="slider-button"
               :disabled="!canEdit || attributes.vitalidade <= MIN_ATTRIBUTE"
-              :class="{ 'disabled': !canEdit || attributes.vitalidade <= MIN_ATTRIBUTE }"
+              :class="{ disabled: !canEdit || attributes.vitalidade <= MIN_ATTRIBUTE }"
+              @click="updateAttribute('vitalidade', attributes.vitalidade - 1)"
             >
               -
             </button>
-            <input 
-              type="range" 
-              min="1" 
-              max="6" 
-              v-model.number="attributes.vitalidade" 
-              @input="updateAttribute('vitalidade', attributes.vitalidade)"
+            <input
+              v-model.number="attributes.vitalidade"
+              type="range"
+              min="1"
+              max="6"
               class="attribute-slider"
               :disabled="!canEdit"
               :class="{ 'disabled-slider': !canEdit }"
-            />
-            <button 
-              @click="updateAttribute('vitalidade', attributes.vitalidade + 1)" 
-              class="slider-button" 
+              @input="updateAttribute('vitalidade', attributes.vitalidade)"
+            >
+            <button
+              class="slider-button"
               :disabled="!canEdit || attributes.vitalidade >= MAX_ATTRIBUTE"
-              :class="{ 'disabled': !canEdit || attributes.vitalidade >= MAX_ATTRIBUTE }"
+              :class="{ disabled: !canEdit || attributes.vitalidade >= MAX_ATTRIBUTE }"
+              @click="updateAttribute('vitalidade', attributes.vitalidade + 1)"
             >
               +
             </button>
           </div>
         </div>
-        
+
         <!-- Mensagem informativa sobre edição de atributos -->
         <div v-if="!canEdit" class="attribute-info-message">
           <p class="text-xs text-goblin-brown italic mt-2">
@@ -264,7 +271,9 @@ const toggleEditAttributes = () => {
 
       <!-- Características Físicas -->
       <div class="goblin-section mb-4">
-        <h3 class="text-xl font-goblin text-goblin-green mb-2">Características Físicas</h3>
+        <h3 class="text-xl font-goblin text-goblin-green mb-2">
+          Características Físicas
+        </h3>
         <div class="goblin-attribute">
           <span class="goblin-attribute-title">Característica Distinta:</span> {{ goblin.physicalAttributes.trait }}
         </div>
@@ -284,7 +293,9 @@ const toggleEditAttributes = () => {
 
       <!-- Personalidade -->
       <div class="goblin-section mb-4">
-        <h3 class="text-xl font-goblin text-goblin-green mb-2">Personalidade</h3>
+        <h3 class="text-xl font-goblin text-goblin-green mb-2">
+          Personalidade
+        </h3>
         <ul class="list-disc list-inside ml-2">
           <li v-for="trait in goblin.personality" :key="trait">
             {{ trait }}
@@ -294,7 +305,9 @@ const toggleEditAttributes = () => {
 
       <!-- Equipamento -->
       <div class="goblin-section mb-4">
-        <h3 class="text-xl font-goblin text-goblin-green mb-2">Equipamento</h3>
+        <h3 class="text-xl font-goblin text-goblin-green mb-2">
+          Equipamento
+        </h3>
         <div class="goblin-attribute">
           <span class="goblin-attribute-title">Arma:</span> {{ goblin.equipment.weapon }}
           <span v-if="goblin.equipment.weaponDetails" class="text-xs ml-2 text-goblin-dark">
@@ -318,8 +331,10 @@ const toggleEditAttributes = () => {
       </div>
 
       <!-- Magias (se for Bruxo) -->
-      <div class="goblin-section mb-4" v-if="goblin.occupation === 'Bruxo' && goblin.spells && goblin.spells.length > 0">
-        <h3 class="text-xl font-goblin text-goblin-green mb-2">Magias</h3>
+      <div v-if="goblin.occupation === 'Bruxo' && goblin.spells && goblin.spells.length > 0" class="goblin-section mb-4">
+        <h3 class="text-xl font-goblin text-goblin-green mb-2">
+          Magias
+        </h3>
         <ul class="list-disc list-inside ml-2">
           <li v-for="spell in goblin.spells" :key="spell">
             {{ spell }}
@@ -328,7 +343,7 @@ const toggleEditAttributes = () => {
       </div>
 
       <!-- Sorte/Maldição -->
-      <div class="goblin-section mb-4" v-if="goblin.luckOrCurse">
+      <div v-if="goblin.luckOrCurse" class="goblin-section mb-4">
         <h3 class="text-xl font-goblin text-goblin-green mb-2">
           {{ goblin.luckOrCurse.type === 'luck' ? 'Sorte' : 'Maldição' }}
         </h3>
@@ -426,21 +441,21 @@ input[type="range"]::-moz-range-thumb {
     height: 100%;
     min-height: 29.7cm;
   }
-  
+
   .slider-button, input[type="range"], .action-button {
     display: none;
   }
-  
+
   .attribute-info-message {
     display: none;
   }
-  
+
   .goblin-sections {
     page-break-inside: avoid;
   }
-  
+
   .goblin-section {
     page-break-inside: avoid;
   }
 }
-</style> 
+</style>
