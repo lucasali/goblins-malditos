@@ -83,10 +83,7 @@ onUnmounted(() => {
         aria-label="Fechar"
         @click="closeSidebar"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
+        <i class="material-icons">close</i>
       </button>
     </div>
 
@@ -97,9 +94,7 @@ onUnmounted(() => {
             class="w-full text-left px-4 py-2 rounded hover:bg-goblin-green text-white transition-colors flex items-center"
             @click="navigateTo('/')"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-            </svg>
+            <i class="material-icons mr-2">home</i>
             Gerador de Goblins
           </button>
         </li>
@@ -108,9 +103,7 @@ onUnmounted(() => {
             class="w-full text-left px-4 py-2 rounded hover:bg-goblin-green text-white transition-colors flex items-center"
             @click="navigateTo('/mesa-do-mestre')"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-            </svg>
+            <i class="material-icons mr-2">dashboard</i>
             Mesa do Mestre
           </button>
         </li>
@@ -193,5 +186,14 @@ onUnmounted(() => {
     rgba(139, 109, 92, 0.5) 10px,
     rgba(139, 109, 92, 0.5) 20px
   );
+}
+
+.material-icons {
+  font-size: 24px;
+  vertical-align: middle;
+}
+
+.close-button .material-icons {
+  font-size: 24px;
 }
 </style>
