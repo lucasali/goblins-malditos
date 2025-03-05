@@ -7,6 +7,7 @@ export interface Attributes {
 
 export interface Goblin {
   id: string
+  seed: string
   name: string
   level: number
   occupation: string
@@ -50,5 +51,4 @@ export interface Goblin {
     type: 'luck' | 'curse'
     description: string
   }
-  seed?: string
 }

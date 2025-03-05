@@ -212,39 +212,6 @@ function addToCollection() {
     showShareMessage.value = false
   }, 3000)
 }
-
-// Função para testar a geração de goblin a partir da seed
-function testSeedConsistency() {
-  if (!currentGoblin.value || !currentGoblin.value.seed)
-    return
-
-  const originalGoblin = currentGoblin.value
-  const originalSeed = originalGoblin.seed
-
-  // Gerar um novo goblin a partir da mesma seed
-  const regeneratedGoblin = generateGoblinFromSeed(originalSeed)
-
-  if (regeneratedGoblin) {
-    // Verificar se os principais atributos são iguais
-    const isNameEqual = originalGoblin.name === regeneratedGoblin.name
-    const isOccupationEqual = originalGoblin.occupation === regeneratedGoblin.occupation
-    const isDescriberEqual = originalGoblin.describer === regeneratedGoblin.describer
-
-    const isConsistent = isNameEqual && isOccupationEqual && isDescriberEqual
-
-    shareMessage.value = isConsistent
-      ? `Teste bem-sucedido! O mesmo goblin (${originalGoblin.name}) foi gerado a partir da mesma seed.`
-      : `Teste falhou! Diferenças encontradas:
-         ${!isNameEqual ? `Nome: ${originalGoblin.name} ≠ ${regeneratedGoblin.name}` : ''}
-         ${!isOccupationEqual ? `Ocupação: ${originalGoblin.occupation} ≠ ${regeneratedGoblin.occupation}` : ''}
-         ${!isDescriberEqual ? `Descritor: ${originalGoblin.describer} ≠ ${regeneratedGoblin.describer}` : ''}`
-
-    showShareMessage.value = true
-    setTimeout(() => {
-      showShareMessage.value = false
-    }, 5000)
-  }
-}
 </script>
 
 <template>
@@ -262,15 +229,6 @@ function testSeedConsistency() {
     <button class="goblin-button" @click="generateNewGoblin">
       {{ currentGoblin ? 'Gerar Outro Goblin' : 'Gerar Goblin' }}
     </button>
-
-    <div v-if="currentGoblin" class="mt-2">
-      <button
-        class="text-sm bg-goblin-brown hover:bg-goblin-green text-white py-1 px-3 rounded transition-colors"
-        @click="testSeedConsistency"
-      >
-        Testar Consistência da Seed
-      </button>
-    </div>
 
     <p v-if="!currentGoblin" class="text-goblin-brown italic text-sm max-w-md text-center">
       Clique no botão acima para gerar um goblin aleatório para sua aventura.

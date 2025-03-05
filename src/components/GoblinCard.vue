@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Goblin } from '../services/goblinGenerator'
 import { ref } from 'vue'
+import { useGameStore } from '../stores/gameStore'
 import GoblinImage from './GoblinImage.vue'
 
 defineProps<{
@@ -14,6 +15,8 @@ const emit = defineEmits<{
   (e: 'addToCollection'): void
 }>()
 
+const gameStore = useGameStore()
+
 const showImage = ref<boolean>(false)
 
 const apiKey = ref<string>('')
@@ -25,10 +28,6 @@ function copyGoblin() {
 
 function shareGoblin() {
   emit('share')
-}
-
-function addToCollection() {
-  emit('addToCollection')
 }
 
 function toggleImageVisibility() {
@@ -113,7 +112,7 @@ function saveApiKey() {
             <button
               class="w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors"
               title="Adicionar à coleção"
-              @click="addToCollection"
+              @click="gameStore.addPlayer(goblin.seed)"
             >
               <span class="material-icons">add_to_photos</span>
             </button>
