@@ -1,4 +1,3 @@
-import { useId } from 'vue'
 import {
   describerModifiers,
   describers,
@@ -21,7 +20,10 @@ export interface Goblin {
   level: number
   occupation: string
   describer: string
-  technique: string
+  technique: {
+    title: string
+    description: string
+  }
   attributes: {
     combate: number
     habilidade: number
@@ -317,7 +319,12 @@ export function generateGoblin(): Goblin {
   const describer = getRandomItem(describers)
 
   // Gerar técnica baseada na ocupação (nível 1)
-  const technique = occupationTechniques[occupation as keyof typeof occupationTechniques][1]
+  const techniqueText = occupationTechniques[occupation as keyof typeof occupationTechniques][1]
+  const [title, description] = techniqueText.split(': ')
+  const technique = {
+    title,
+    description,
+  }
 
   // Gerar atributos base e aplicar modificadores
   const baseAttributes = generateBaseAttributes()
@@ -403,6 +410,7 @@ export function generateGoblin(): Goblin {
   const goblin: Goblin = {
     id: generateId(),
     name,
+    level: 1,
     occupation,
     describer,
     technique,

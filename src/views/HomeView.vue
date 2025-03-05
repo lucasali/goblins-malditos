@@ -16,13 +16,6 @@ const currentGoblin = ref<Goblin | null>(null)
 // Estado para controlar se os atributos podem ser editados
 const canEditAttributes = ref<boolean>(false)
 
-// Estado para controlar se a imagem está visível
-const showImage = ref<boolean>(false)
-
-// Estado para armazenar a chave da API
-const apiKey = ref<string>('')
-const showApiConfig = ref<boolean>(false)
-
 // Estado para mensagens de compartilhamento
 const shareMessage = ref<string>('')
 const showShareMessage = ref<boolean>(false)
@@ -37,10 +30,10 @@ onMounted(() => {
 
   // Priorizar a chave do localStorage, depois a do ambiente
   if (savedApiKey) {
-    apiKey.value = savedApiKey
+    // apiKey.value = savedApiKey
   }
   else if (envApiKey) {
-    apiKey.value = envApiKey
+    // apiKey.value = envApiKey
     // Salvar no localStorage para uso futuro
     localStorage.setItem('openai_api_key', envApiKey)
   }
@@ -69,12 +62,6 @@ function loadGoblinFromSeed(seed: string) {
     // Em caso de erro, gerar um novo goblin
     generateNewGoblin()
   }
-}
-
-// Função para salvar a chave da API
-function saveApiKey() {
-  localStorage.setItem('openai_api_key', apiKey.value)
-  showApiConfig.value = false
 }
 
 // Função para gerar um novo goblin
@@ -186,11 +173,6 @@ function updateGoblinAttributes(newAttributes: Partial<Goblin['attributes']>) {
 function toggleAttributeEditing() {
   canEditAttributes.value = !canEditAttributes.value
 }
-
-// Função para alternar a visibilidade da imagem
-function toggleImageVisibility() {
-  showImage.value = !showImage.value
-}
 </script>
 
 <template>
@@ -223,61 +205,6 @@ function toggleImageVisibility() {
       leave-to-class="opacity-0"
     >
       <div v-if="currentGoblin" class="goblin-display flex flex-col items-center gap-12">
-        <div class="image-collapse-container mb-12">
-          <button
-            class="collapse-button w-full flex justify-between items-center p-2 bg-goblin-brown hover:bg-goblin-green text-white rounded-t"
-            @click="toggleImageVisibility"
-          >
-            <span>{{ showImage ? 'Esconder Imagem do Goblin' : 'Mostrar Imagem do Goblin' }}</span>
-            <span class="transform transition-transform" :class="{ 'rotate-180': showImage }">▼</span>
-          </button>
-
-          <div
-            v-show="showImage"
-            class="collapse-content bg-goblin-dark bg-opacity-20 p-4 rounded-b"
-          >
-            <div class="flex justify-end mb-2">
-              <button
-                class="text-sm bg-goblin-brown hover:bg-goblin-green px-3 py-1 rounded flex items-center"
-                @click="showApiConfig = !showApiConfig"
-              >
-                <span class="material-icons text-sm mr-1">key</span>
-                {{ apiKey ? 'Alterar API Key' : 'Configurar API Key' }}
-              </button>
-            </div>
-
-            <div v-if="showApiConfig" class="bg-goblin-dark p-4 rounded-lg border border-goblin-brown mb-4">
-              <h3 class="text-lg font-goblin text-goblin-green mb-2">
-                Configuração da API OpenAI
-              </h3>
-              <p class="text-sm mb-2">
-                Para gerar imagens dos goblins, você precisa de uma chave de API da OpenAI.
-                <a href="https://platform.openai.com/api-keys" target="_blank" class="text-goblin-green underline">
-                  Obtenha uma aqui
-                </a>.
-              </p>
-              <div class="mb-2">
-                <input
-                  v-model="apiKey"
-                  type="password"
-                  placeholder="Insira sua chave de API da OpenAI"
-                  class="w-full p-2 rounded bg-goblin-gray text-white"
-                >
-              </div>
-              <div class="flex justify-end">
-                <button class="bg-goblin-green hover:bg-goblin-brown px-3 py-1 rounded" @click="saveApiKey">
-                  Salvar
-                </button>
-              </div>
-            </div>
-
-            <GoblinImage
-              :goblin="currentGoblin"
-              :api-key="apiKey"
-            />
-          </div>
-        </div>
-
         <GoblinCard
           :goblin="currentGoblin"
           :can-edit-attributes="canEditAttributes"

@@ -11,7 +11,10 @@ export interface Goblin {
   level: number
   occupation: string
   describer: string
-  technique: string
+  technique: {
+    title: string
+    description: string
+  }
   attributes: {
     combate: number
     habilidade: number

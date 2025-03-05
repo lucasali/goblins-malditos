@@ -1,7 +1,7 @@
 export const goblinNames = [
   ['Plaft', 'Plin', 'Tik', 'Tok', 'Bash', 'Cricri'],
   ['Glub', 'Tim', 'Ranço', 'Yhaa', 'Vrum', 'Aiaiai'],
-  ['Crash', 'Zzzz', 'Sussa', 'Bibi', 'Boom', 'Bum'],
+  ['Crash', 'Guiniquegui', 'Sussa', 'Bibi', 'Boom', 'Bum'],
   ['Spray', 'Cringe', 'Sopa', 'Ovo', 'Ban', 'Nhack'],
   ['Bing', 'Riso', 'Slash', 'Coff', 'Ugh', 'Sniff'],
   ['[Última coisa que comeu]', '[Inverta seu nome]'],
