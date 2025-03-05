@@ -19,7 +19,7 @@ function toggleSidebar() {
       <line x1="3" y1="6" x2="21" y2="6" />
       <line x1="3" y1="18" x2="21" y2="18" />
     </svg>
-    <span class="ml-2 hidden md:inline">Role os dados</span>
+    <span class="ml-2 hidden md:inline">Menu</span>
   </button>
 </template>
 

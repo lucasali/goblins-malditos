@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import MesaDoMestreView from '../views/MesaDoMestreView.vue'
 import HomeView from '../views/HomeView.vue'
-import GoblinCollectionView from '../views/GoblinCollectionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,9 +11,9 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/collection',
-      name: 'collection',
-      component: GoblinCollectionView,
+      path: '/mesa-do-mestre',
+      name: 'mesa-do-mestre',
+      component: MesaDoMestreView,
     },
   ],
 })

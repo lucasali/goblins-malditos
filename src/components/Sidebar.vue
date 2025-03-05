@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import DiceRoller from './DiceRoller.vue'
 
 // Props
-const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    default: false,
-  },
-})
+const props = defineProps<{
+  isOpen: boolean
+}>()
 
 // Emits
-const emit = defineEmits(['close'])
+const emit = defineEmits<{
+  close: []
+}>()
 
 // Router
 const router = useRouter()
@@ -35,6 +33,19 @@ function handleClickOutside(event: MouseEvent) {
   }
 }
 
+// Close sidebar
+function closeSidebar() {
+  emit('close')
+}
+
+// Navigate to a route and close sidebar on mobile devices
+function navigateTo(route: string) {
+  router.push(route)
+  if (isMobile.value) {
+    closeSidebar()
+  }
+}
+
 // Lifecycle hooks
 onMounted(() => {
   checkMobile()
@@ -46,38 +57,23 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
   document.removeEventListener('mousedown', handleClickOutside)
 })
-
-// Close sidebar
-function closeSidebar() {
-  emit('close')
-}
-
-// Navegar para uma rota e fechar o sidebar em dispositivos móveis
-function navigateTo(route: string) {
-  router.push(route)
-  if (isMobile.value) {
-    closeSidebar()
-  }
-}
 </script>
 
 <template>
-  <!-- Overlay for mobile -->
   <div
     v-if="isMobile && isOpen"
     class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
     @click="closeSidebar"
   />
 
-  <!-- Sidebar/Modal -->
   <aside
     id="goblin-sidebar"
-    class="sidebar-container" :class="[
+    class="sidebar-container"
+    :class="[
       isMobile ? 'mobile-sidebar' : 'desktop-sidebar',
       isOpen ? 'open' : 'closed',
     ]"
   >
-    <!-- Header -->
     <div class="sidebar-header">
       <h2 class="text-xl">
         Menu
@@ -94,13 +90,12 @@ function navigateTo(route: string) {
       </button>
     </div>
 
-    <!-- Navigation -->
     <nav class="p-4 border-b border-goblin-green">
       <ul class="space-y-2">
         <li>
-          <button 
-            @click="navigateTo('/')" 
+          <button
             class="w-full text-left px-4 py-2 rounded hover:bg-goblin-green text-white transition-colors flex items-center"
+            @click="navigateTo('/')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
@@ -109,24 +104,18 @@ function navigateTo(route: string) {
           </button>
         </li>
         <li>
-          <button 
-            @click="navigateTo('/collection')" 
+          <button
             class="w-full text-left px-4 py-2 rounded hover:bg-goblin-green text-white transition-colors flex items-center"
+            @click="navigateTo('/mesa-do-mestre')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
             </svg>
-            Coleção de Goblins
+            Mesa do Mestre
           </button>
         </li>
       </ul>
     </nav>
-
-    <!-- Content -->
-    <div class="sidebar-content">
-      <h3 class="text-lg text-white mb-3">Rolador de Dados</h3>
-      <DiceRoller />
-    </div>
 
     <!-- Footer -->
     <div class="sidebar-footer">
@@ -186,11 +175,6 @@ function navigateTo(route: string) {
 .close-button {
   @apply p-1 rounded-full hover:bg-goblin-green text-white;
   transform: none !important;
-}
-
-/* Content */
-.sidebar-content {
-  @apply flex-grow p-4;
 }
 
 /* Footer */
