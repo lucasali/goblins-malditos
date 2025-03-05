@@ -29,6 +29,7 @@ const isRolling = ref(false)
 const diceLabel = computed(() => `d${props.faces}`)
 const diceClass = computed(() => `dice-d${props.faces}`)
 const hasResult = computed(() => props.result !== null && props.result !== undefined)
+const isHit = computed(() => hasResult.value && props.result !== null && props.result >= 4)
 
 // Methods
 function handleClick() {
@@ -69,7 +70,11 @@ defineExpose({
   <div
     class="dice" :class="[
       diceClass,
-      { 'selected': selected, 'has-result': hasResult },
+      { 
+        'selected': selected, 
+        'has-result': hasResult,
+        'is-hit': isHit
+      },
     ]"
     @click="handleClick"
   >
@@ -116,6 +121,22 @@ defineExpose({
 
 .has-result .dice-result {
   @apply text-2xl text-goblin-green mt-0;
+}
+
+/* Hit style - for results >= 4 */
+.is-hit {
+  @apply border-yellow-500 bg-goblin-dark shadow-md shadow-yellow-500/30;
+  animation: pulse-hit 1.5s infinite;
+}
+
+.is-hit .dice-result {
+  @apply text-yellow-400 font-extrabold;
+}
+
+@keyframes pulse-hit {
+  0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); }
 }
 
 /* Dice types with different shapes */
