@@ -27,10 +27,6 @@ function shareGoblin() {
   emit('share')
 }
 
-function _toggleEditAttributes() {
-  emit('toggleEdit')
-}
-
 function addToCollection() {
   emit('addToCollection')
 }

@@ -63,7 +63,7 @@ export interface Goblin {
 }
 
 // Interface para os índices usados na seed
-interface _GoblinIndices {
+/* interface GoblinIndices {
   nameRow: number
   nameCol: number
   lastName?: { row: number, col: number }
@@ -80,7 +80,7 @@ interface _GoblinIndices {
   spells?: number[]
   isLucky?: boolean
   luckOrCurse?: number
-}
+} */
 
 // Função para selecionar um item aleatório de um array
 function getRandomItem<T>(array: T[]): T {
