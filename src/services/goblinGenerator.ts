@@ -59,7 +59,7 @@ export interface Goblin {
     type: 'luck' | 'curse'
     description: string
   }
-  seed?: string
+  seed: string
 }
 
 // Interface para os índices usados na seed
@@ -261,43 +261,40 @@ function generateSpells(): string[] {
   return getRandomItems(spells, 3)
 }
 
-// Função para gerar uma seed a partir de um goblin
-export function generateSeedFromGoblin(goblin: Goblin): string {
-  // Encontrar os índices de cada elemento do goblin
-  const indices: GoblinIndices = {
-    nameRow: 0,
-    nameCol: 0,
-    occupation: occupations.indexOf(goblin.occupation),
-    describer: describers.indexOf(goblin.describer),
-    trait: { row: 0, col: 0 },
-    height: 0,
-    weight: 0,
-    skinColor: 0,
-    eyeColor: 0,
-    personality: [],
-    equipment: 0,
-    items: [],
-  }
-
-  // Converter para JSON e codificar em base64
-  return btoa(JSON.stringify(indices))
-}
-
 // Função para gerar um goblin a partir de uma seed
 export function generateGoblinFromSeed(seed: string): Goblin | null {
   try {
     // Decodificar a seed de base64 para JSON
-    const indices: GoblinIndices = JSON.parse(atob(seed))
-
-    console.warn('indices', indices)
-
-    // Como a estrutura da seed mudou, vamos gerar um novo goblin
-    // Esta é uma solução temporária para lidar com seeds antigas
-    return generateGoblin()
+    const decodedSeed = atob(seed)
+    const goblinData = JSON.parse(decodedSeed)
+    
+    // Garantir que o goblin tenha a seed e um ID único
+    const goblin: Goblin = { 
+      ...goblinData, 
+      id: goblinData.id || generateId(), // Manter o ID original ou gerar um novo
+      seed // Adicionar a seed original
+    }
+    
+    return goblin
   }
   catch (error) {
     console.error('Erro ao gerar goblin a partir da seed:', error)
     return null
+  }
+}
+
+// Função para gerar uma seed a partir de um goblin
+export function generateSeedFromGoblin(goblin: Goblin): string {
+  try {
+    // Criar uma cópia do goblin sem a propriedade seed para evitar recursão
+    const { seed, ...goblinWithoutSeed } = goblin
+    
+    // Converter o goblin para JSON e depois para base64
+    return btoa(JSON.stringify(goblinWithoutSeed))
+  } catch (error) {
+    console.error('Erro ao gerar seed a partir do goblin:', error)
+    // Retornar uma string vazia em caso de erro
+    throw new Error('Falha ao gerar seed para o goblin')
   }
 }
 
@@ -407,7 +404,7 @@ export function generateGoblin(): Goblin {
   }
 
   // Criar o goblin
-  const goblin: Goblin = {
+  const goblinData = {
     id: generateId(),
     name,
     level: 1,
@@ -434,7 +431,22 @@ export function generateGoblin(): Goblin {
     luckOrCurse,
   }
 
-  // Gerar e adicionar a seed
-  const seed = generateSeedFromGoblin(goblin)
-  return { ...goblin, seed }
+  try {
+    // Criar o objeto goblin com a seed
+    const goblin: Goblin = {
+      ...goblinData,
+      seed: btoa(JSON.stringify(goblinData))
+    }
+
+    return goblin
+  } catch (error) {
+    console.error('Erro ao gerar seed para o goblin:', error)
+    
+    // Em caso de erro, retornar o goblin com uma seed vazia
+    // Isso não deve acontecer em condições normais
+    return {
+      ...goblinData,
+      seed: 'error-generating-seed'
+    } as Goblin
+  }
 }

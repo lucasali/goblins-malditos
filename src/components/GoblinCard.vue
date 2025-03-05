@@ -11,6 +11,7 @@ const emit = defineEmits<{
   (e: 'copy'): void
   (e: 'share'): void
   (e: 'toggleEdit'): void
+  (e: 'addToCollection'): void
 }>()
 
 const showImage = ref<boolean>(false)
@@ -28,6 +29,10 @@ function shareGoblin() {
 
 function _toggleEditAttributes() {
   emit('toggleEdit')
+}
+
+function addToCollection() {
+  emit('addToCollection')
 }
 
 function toggleImageVisibility() {
@@ -109,6 +114,14 @@ function saveApiKey() {
           </h2>
 
           <div class="flex gap-2">
+            <button
+              class="w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors"
+              title="Adicionar à coleção"
+              @click="addToCollection"
+            >
+              <span class="material-icons">add_to_photos</span>
+            </button>
+            
             <button
               class="w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors"
               title="Compartilhar ficha"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import DiceRoller from './DiceRoller.vue'
 
 // Props
@@ -12,6 +13,9 @@ const props = defineProps({
 
 // Emits
 const emit = defineEmits(['close'])
+
+// Router
+const router = useRouter()
 
 // State
 const isMobile = ref(false)
@@ -47,6 +51,14 @@ onUnmounted(() => {
 function closeSidebar() {
   emit('close')
 }
+
+// Navegar para uma rota e fechar o sidebar em dispositivos móveis
+function navigateTo(route: string) {
+  router.push(route)
+  if (isMobile.value) {
+    closeSidebar()
+  }
+}
 </script>
 
 <template>
@@ -68,7 +80,7 @@ function closeSidebar() {
     <!-- Header -->
     <div class="sidebar-header">
       <h2 class="text-xl">
-        Rolador de Dados
+        Menu
       </h2>
       <button
         class="close-button"
@@ -82,8 +94,37 @@ function closeSidebar() {
       </button>
     </div>
 
+    <!-- Navigation -->
+    <nav class="p-4 border-b border-goblin-green">
+      <ul class="space-y-2">
+        <li>
+          <button 
+            @click="navigateTo('/')" 
+            class="w-full text-left px-4 py-2 rounded hover:bg-goblin-green text-white transition-colors flex items-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+            </svg>
+            Gerador de Goblins
+          </button>
+        </li>
+        <li>
+          <button 
+            @click="navigateTo('/collection')" 
+            class="w-full text-left px-4 py-2 rounded hover:bg-goblin-green text-white transition-colors flex items-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+            </svg>
+            Coleção de Goblins
+          </button>
+        </li>
+      </ul>
+    </nav>
+
     <!-- Content -->
     <div class="sidebar-content">
+      <h3 class="text-lg text-white mb-3">Rolador de Dados</h3>
       <DiceRoller />
     </div>
 
