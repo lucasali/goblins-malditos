@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MesaDoMestreView from '../views/MesaDoMestreView.vue'
 import HomeView from '../views/HomeView.vue'
+import MesaDoMestreView from '../views/MesaDoMestreView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

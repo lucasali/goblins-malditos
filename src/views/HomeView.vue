@@ -3,7 +3,6 @@ import type { Goblin } from '../services/goblinGenerator'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import GoblinCard from '../components/GoblinCard.vue'
-import GoblinImage from '../components/GoblinImage.vue'
 import { generateGoblin, generateGoblinFromSeed } from '../services/goblinGenerator'
 
 // Obter a rota e o router para manipular a URL
@@ -175,21 +174,23 @@ function toggleEditAttributes() {
 
 // Função para adicionar o goblin atual à coleção
 function addToCollection() {
-  if (!currentGoblin.value || !currentGoblin.value.seed) return
-  
+  if (!currentGoblin.value || !currentGoblin.value.seed)
+    return
+
   // Verificar se já existe uma coleção no localStorage
   const savedCollection = localStorage.getItem('goblinCollection')
   let seeds: string[] = []
-  
+
   if (savedCollection) {
     try {
       seeds = JSON.parse(savedCollection)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Erro ao carregar a coleção:', error)
       seeds = []
     }
   }
-  
+
   // Verificar se o goblin já está na coleção
   if (currentGoblin.value.seed && seeds.includes(currentGoblin.value.seed)) {
     shareMessage.value = 'Este goblin já está na coleção!'
@@ -199,11 +200,11 @@ function addToCollection() {
     }, 3000)
     return
   }
-  
+
   // Adicionar a seed à coleção
   seeds.push(currentGoblin.value.seed)
   localStorage.setItem('goblinCollection', JSON.stringify(seeds))
-  
+
   // Mostrar mensagem de sucesso
   shareMessage.value = 'Goblin adicionado à coleção com sucesso!'
   showShareMessage.value = true
@@ -214,29 +215,30 @@ function addToCollection() {
 
 // Função para testar a geração de goblin a partir da seed
 function testSeedConsistency() {
-  if (!currentGoblin.value || !currentGoblin.value.seed) return
-  
+  if (!currentGoblin.value || !currentGoblin.value.seed)
+    return
+
   const originalGoblin = currentGoblin.value
   const originalSeed = originalGoblin.seed
-  
+
   // Gerar um novo goblin a partir da mesma seed
   const regeneratedGoblin = generateGoblinFromSeed(originalSeed)
-  
+
   if (regeneratedGoblin) {
     // Verificar se os principais atributos são iguais
     const isNameEqual = originalGoblin.name === regeneratedGoblin.name
     const isOccupationEqual = originalGoblin.occupation === regeneratedGoblin.occupation
     const isDescriberEqual = originalGoblin.describer === regeneratedGoblin.describer
-    
+
     const isConsistent = isNameEqual && isOccupationEqual && isDescriberEqual
-    
-    shareMessage.value = isConsistent 
-      ? `Teste bem-sucedido! O mesmo goblin (${originalGoblin.name}) foi gerado a partir da mesma seed.` 
+
+    shareMessage.value = isConsistent
+      ? `Teste bem-sucedido! O mesmo goblin (${originalGoblin.name}) foi gerado a partir da mesma seed.`
       : `Teste falhou! Diferenças encontradas:
          ${!isNameEqual ? `Nome: ${originalGoblin.name} ≠ ${regeneratedGoblin.name}` : ''}
          ${!isOccupationEqual ? `Ocupação: ${originalGoblin.occupation} ≠ ${regeneratedGoblin.occupation}` : ''}
          ${!isDescriberEqual ? `Descritor: ${originalGoblin.describer} ≠ ${regeneratedGoblin.describer}` : ''}`
-    
+
     showShareMessage.value = true
     setTimeout(() => {
       showShareMessage.value = false
@@ -262,9 +264,9 @@ function testSeedConsistency() {
     </button>
 
     <div v-if="currentGoblin" class="mt-2">
-      <button 
-        @click="testSeedConsistency" 
+      <button
         class="text-sm bg-goblin-brown hover:bg-goblin-green text-white py-1 px-3 rounded transition-colors"
+        @click="testSeedConsistency"
       >
         Testar Consistência da Seed
       </button>
@@ -275,8 +277,8 @@ function testSeedConsistency() {
       Cada goblin é único, caótico e provavelmente não vai durar muito tempo!
     </p>
 
-    <div 
-      v-if="showShareMessage" 
+    <div
+      v-if="showShareMessage"
       class="mt-2 p-3 rounded-md transition-all duration-300 bg-green-100 text-green-700 border border-green-300"
     >
       {{ shareMessage }}

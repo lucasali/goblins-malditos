@@ -63,7 +63,7 @@ export interface Goblin {
 }
 
 // Interface para os índices usados na seed
-interface GoblinIndices {
+interface _GoblinIndices {
   nameRow: number
   nameCol: number
   lastName?: { row: number, col: number }
@@ -267,14 +267,14 @@ export function generateGoblinFromSeed(seed: string): Goblin | null {
     // Decodificar a seed de base64 para JSON
     const decodedSeed = atob(seed)
     const goblinData = JSON.parse(decodedSeed)
-    
+
     // Garantir que o goblin tenha a seed e um ID único
-    const goblin: Goblin = { 
-      ...goblinData, 
+    const goblin: Goblin = {
+      ...goblinData,
       id: goblinData.id || generateId(), // Manter o ID original ou gerar um novo
-      seed // Adicionar a seed original
+      seed, // Adicionar a seed original
     }
-    
+
     return goblin
   }
   catch (error) {
@@ -288,10 +288,11 @@ export function generateSeedFromGoblin(goblin: Goblin): string {
   try {
     // Criar uma cópia do goblin sem a propriedade seed para evitar recursão
     const { seed, ...goblinWithoutSeed } = goblin
-    
+
     // Converter o goblin para JSON e depois para base64
     return btoa(JSON.stringify(goblinWithoutSeed))
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Erro ao gerar seed a partir do goblin:', error)
     // Retornar uma string vazia em caso de erro
     throw new Error('Falha ao gerar seed para o goblin')
@@ -435,18 +436,19 @@ export function generateGoblin(): Goblin {
     // Criar o objeto goblin com a seed
     const goblin: Goblin = {
       ...goblinData,
-      seed: btoa(JSON.stringify(goblinData))
+      seed: btoa(JSON.stringify(goblinData)),
     }
 
     return goblin
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Erro ao gerar seed para o goblin:', error)
-    
+
     // Em caso de erro, retornar o goblin com uma seed vazia
     // Isso não deve acontecer em condições normais
     return {
       ...goblinData,
-      seed: 'error-generating-seed'
+      seed: 'error-generating-seed',
     } as Goblin
   }
 }
