@@ -21,7 +21,7 @@ function closeSidebar() {
 
     <Sidebar :is-open="isSidebarOpen" @close="closeSidebar" />
 
-    <main class="pt-16 transition-all duration-300 ease-in-out" :class="{ 'md:ml-64': isSidebarOpen }">
+    <main class="container mx-auto pt-16 transition-all duration-300 ease-in-out" :class="{ 'md:ml-64': isSidebarOpen }">
       <RouterView />
     </main>
 

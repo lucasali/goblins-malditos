@@ -46,7 +46,7 @@ function saveApiKey() {
 </script>
 
 <template>
-  <div v-if="goblin" class="bg-parchment text-goblin-dark p-5 rounded-lg shadow-lg border-2 border-goblin-brown md:max-w-7xl">
+  <div v-if="goblin" class="bg-parchment md:max-w-5xl text-goblin-dark p-5 rounded-lg shadow-lg border-2 border-goblin-brown">
     <div class="space-y-6">
       <div class="image-collapse-container">
         <button
@@ -121,7 +121,7 @@ function saveApiKey() {
             >
               <span class="material-icons">add_to_photos</span>
             </button>
-            
+
             <button
               class="w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors"
               title="Compartilhar ficha"
