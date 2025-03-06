@@ -10,7 +10,7 @@ function toggleSidebar() {
 
 <template>
   <button
-    class="sidebar-toggle"
+    class="fixed top-4 left-4 z-30 flex items-center bg-goblin-green hover:bg-goblin-brown text-white py-2 px-3 rounded-md shadow-md transition-all duration-300 hover:shadow-lg"
     aria-label="Toggle Sidebar"
     @click="toggleSidebar"
   >
@@ -18,22 +18,3 @@ function toggleSidebar() {
     <span class="ml-2 hidden md:inline">Menu</span>
   </button>
 </template>
-
-<style scoped>
-.sidebar-toggle {
-  @apply fixed top-4 left-4 z-30 flex items-center bg-goblin-green hover:bg-goblin-brown text-white py-2 px-3 rounded-md shadow-md transition-all duration-300;
-  transform: none !important;
-}
-
-.sidebar-toggle:hover {
-  @apply shadow-lg;
-}
-
-.sidebar-toggle i.material-icons {
-  @apply transition-transform duration-300;
-}
-
-.sidebar-toggle:hover i.material-icons {
-  transform: rotate(90deg);
-}
-</style>

@@ -9,10 +9,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'copy'): void
   (e: 'share'): void
-  (e: 'toggleEdit'): void
-  (e: 'addToCollection'): void
 }>()
 
 const gameStore = useGameStore()
@@ -21,10 +18,6 @@ const showImage = ref<boolean>(false)
 
 const apiKey = ref<string>('')
 const showApiConfig = ref<boolean>(false)
-
-function copyGoblin() {
-  emit('copy')
-}
 
 function shareGoblin() {
   emit('share')
@@ -112,7 +105,7 @@ function saveApiKey() {
             <button
               class="w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors"
               title="Adicionar à coleção"
-              @click="gameStore.addPlayer(goblin.seed)"
+              @click="gameStore.addPlayer(goblin.seed ?? '')"
             >
               <span class="material-icons">add_to_photos</span>
             </button>
@@ -123,14 +116,6 @@ function saveApiKey() {
               @click="shareGoblin"
             >
               <span class="material-icons">share</span>
-            </button>
-
-            <button
-              class="w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors"
-              title="Copiar ficha"
-              @click="copyGoblin"
-            >
-              <span class="material-icons">content_copy</span>
             </button>
           </div>
         </div>

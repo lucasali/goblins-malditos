@@ -16,17 +16,23 @@ function closeSidebar() {
 </script>
 
 <template>
-  <div class="app">
+  <div class="relative">
     <SidebarToggle @toggle="toggleSidebar" />
 
     <Sidebar :is-open="isSidebarOpen" @close="closeSidebar" />
 
-    <main class="container mx-auto pt-16 transition-all duration-300 ease-in-out" :class="{ 'md:ml-64': isSidebarOpen }">
+    <header class="text-center space-y-2">
+      <h1 class="font-bold font-goblin text-goblin-green text-shadow-goblin text-5xl text">
+        Goblins Malditos
+      </h1>
+    </header>
+
+    <main class="container mx-auto transition-all duration-300 ease-in-out" :class="{ 'md:ml-64': isSidebarOpen }">
       <RouterView />
     </main>
 
     <footer class="text-center text-goblin-brown text-sm">
-      <p>Criado para o RPG Goblins Malditos - Onde a morte é apenas o começo!</p>
+      <p>Criado por <a href="https://github.com/lucasali">Lucas Ali</a></p>
     </footer>
   </div>
 </template>
