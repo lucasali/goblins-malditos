@@ -24,11 +24,11 @@ Uma aplicação web interativa para gerar goblins aleatórios para o RPG Goblins
 1. Clone o repositório
 2. Instale as dependências:
    ```
-   npm install
+   pnpm install
    ```
 3. Execute o servidor de desenvolvimento:
    ```
-   npm run dev
+   pnpm dev
    ```
 4. Acesse `http://localhost:5173` no seu navegador
 
@@ -93,7 +93,7 @@ Você pode:
 Para construir a versão de produção:
 
 ```
-npm run build
+pnpm build
 ```
 
 Os arquivos serão gerados na pasta `dist`.
