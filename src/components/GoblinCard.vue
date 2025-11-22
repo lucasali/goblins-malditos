@@ -1,31 +1,102 @@
 <script setup lang="ts">
 import type { Goblin } from '../services/goblinGenerator'
-import { ref } from 'vue'
-import { useGameStore } from '../stores/gameStore'
-import GoblinImage from './GoblinImage.vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
+import { armorIconMap, weaponIconMap } from '../data/iconMaps'
 
-defineProps<{
+const props = defineProps<{
   goblin: Goblin
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'share'): void
 }>()
 
-const gameStore = useGameStore()
+// Map of all icon components used
+const iconComponents: Record<string, any> = {
+  // Weapons
+  'sacrificial-dagger': defineAsyncComponent(() => import('~icons/game-icons/sacrificial-dagger')),
+  'bow-arrow': defineAsyncComponent(() => import('~icons/game-icons/bow-arrow')),
+  'blunderbuss': defineAsyncComponent(() => import('~icons/game-icons/blunderbuss')),
+  'crossbow': defineAsyncComponent(() => import('~icons/game-icons/crossbow')),
+  'wizard-staff': defineAsyncComponent(() => import('~icons/game-icons/wizard-staff')),
+  'wood-club': defineAsyncComponent(() => import('~icons/game-icons/wood-club')),
+  'broadsword': defineAsyncComponent(() => import('~icons/game-icons/broadsword')),
+  'rusty-sword': defineAsyncComponent(() => import('~icons/game-icons/rusty-sword')),
+  'rune-sword': defineAsyncComponent(() => import('~icons/game-icons/rune-sword')),
+  'slingshot': defineAsyncComponent(() => import('~icons/game-icons/slingshot')),
+  'bone-knife': defineAsyncComponent(() => import('~icons/game-icons/bone-knife')),
+  'pitchfork': defineAsyncComponent(() => import('~icons/game-icons/pitchfork')),
+  'scythe': defineAsyncComponent(() => import('~icons/game-icons/scythe')),
+  'spear-feather': defineAsyncComponent(() => import('~icons/game-icons/spear-feather')),
+  'battle-axe': defineAsyncComponent(() => import('~icons/game-icons/battle-axe')),
+  'wood-axe': defineAsyncComponent(() => import('~icons/game-icons/wood-axe')),
+  'warhammer': defineAsyncComponent(() => import('~icons/game-icons/warhammer')),
+  'crossed-pistols': defineAsyncComponent(() => import('~icons/game-icons/crossed-pistols')),
+  'two-handed-sword': defineAsyncComponent(() => import('~icons/game-icons/two-handed-sword')),
+  'lunar-wand': defineAsyncComponent(() => import('~icons/game-icons/lunar-wand')),
+  'magic-broom': defineAsyncComponent(() => import('~icons/game-icons/magic-broom')),
 
-const showImage = ref<boolean>(false)
+  // Armor
+  'round-shield': defineAsyncComponent(() => import('~icons/game-icons/round-shield')),
+  'loincloth': defineAsyncComponent(() => import('~icons/game-icons/loincloth')),
+  'outback-hat': defineAsyncComponent(() => import('~icons/game-icons/outback-hat')),
+  'chain-mail': defineAsyncComponent(() => import('~icons/game-icons/chain-mail')),
+  'viking-helmet': defineAsyncComponent(() => import('~icons/game-icons/viking-helmet')),
+  'dragon-shield': defineAsyncComponent(() => import('~icons/game-icons/dragon-shield')),
+  'cooking-pot': defineAsyncComponent(() => import('~icons/game-icons/cooking-pot')),
+  'breastplate': defineAsyncComponent(() => import('~icons/game-icons/breastplate')),
+  'empty-wood-bucket-handle': defineAsyncComponent(() => import('~icons/game-icons/empty-wood-bucket-handle')),
+  'opened-food-can': defineAsyncComponent(() => import('~icons/game-icons/opened-food-can')),
+}
 
-const apiKey = ref<string>('')
+const getWeaponIcon = computed(() => {
+  const iconName = weaponIconMap[props.goblin.equipment.weapon]
+  return iconName ? iconComponents[iconName] : null
+})
+
+const getArmorIcon = computed(() => {
+  const iconName = armorIconMap[props.goblin.equipment.armor]
+  return iconName ? iconComponents[iconName] : null
+})
+
+const apiKey = ref<string>(localStorage.getItem('openai_api_key') || '')
 const showApiConfig = ref<boolean>(false)
 
-function shareGoblin() {
-  emit('share')
+// 3D Perspective Logic
+const cardElement = ref<HTMLElement | null>(null)
+const rotationX = ref(0)
+const rotationY = ref(0)
+
+function handleMouseMove(e: MouseEvent) {
+  if (!cardElement.value)
+    return
+
+  const rect = cardElement.value.getBoundingClientRect()
+  const x = e.clientX - rect.left
+  const y = e.clientY - rect.top
+
+  const centerX = rect.width / 2
+  const centerY = rect.height / 2
+
+  const rotateX = ((y - centerY) / centerY) * -10 // Max 10 deg rotation
+  const rotateY = ((x - centerX) / centerX) * 10
+
+  rotationX.value = rotateX
+  rotationY.value = rotateY
 }
 
-function toggleImageVisibility() {
-  showImage.value = !showImage.value
+function resetTilt() {
+  rotationX.value = 0
+  rotationY.value = 0
 }
+
+const cardStyle = computed(() => {
+  return {
+    transform: `perspective(1000px) rotateX(${rotationX.value}deg) rotateY(${rotationY.value}deg)`,
+    backgroundImage: `url('/src/assets/card.png')`,
+    backgroundSize: '100% 100%',
+  }
+})
 
 function saveApiKey() {
   localStorage.setItem('openai_api_key', apiKey.value)
@@ -34,239 +105,169 @@ function saveApiKey() {
 </script>
 
 <template>
-  <div v-if="goblin" class="bg-parchment md:max-w-5xl text-goblin-dark p-5 rounded-lg shadow-lg border-2 border-goblin-brown">
-    <div class="space-y-6">
-      <div class="image-collapse-container">
-        <button
-          class="collapse-button w-full flex justify-between items-center p-2 bg-goblin-brown hover:bg-goblin-green text-white rounded-t"
-          @click="toggleImageVisibility"
-        >
-          <span>{{ showImage ? 'Esconder Imagem do Goblin' : 'Mostrar Imagem do Goblin' }}</span>
-          <span class="transform transition-transform" :class="{ 'rotate-180': showImage }">▼</span>
-        </button>
+  <div class="perspective-container w-full max-w-md mx-auto" @mousemove="handleMouseMove" @mouseleave="resetTilt">
+    <!-- API Config Modal/Panel -->
+    <div v-if="showApiConfig" class="absolute -right-80 top-0 w-72 bg-parchment-texture p-4 rounded border-2 border-goblin-brown shadow-xl z-50 text-ink font-parchment">
+      <h3 class="font-goblin text-lg mb-2">
+        Configuração API
+      </h3>
+      <input
+        v-model="apiKey"
+        type="password"
+        placeholder="OpenAI API Key"
+        class="w-full p-2 mb-2 bg-white bg-opacity-50 border border-goblin-brown rounded"
+      >
+      <button class="w-full text-sm" @click="saveApiKey">
+        Salvar
+      </button>
+    </div>
 
-        <div
-          v-show="showImage"
-          class="collapse-content bg-goblin-dark bg-opacity-20 p-4 rounded-b"
-        >
-          <div class="space-y-4">
-            <div class="flex justify-end">
-              <button
-                class="text-sm bg-goblin-brown hover:bg-goblin-green px-3 py-1 rounded flex items-center gap-1"
-                @click="showApiConfig = !showApiConfig"
-              >
-                <span class="material-icons text-sm">key</span>
-                {{ apiKey ? 'Alterar API Key' : 'Configurar API Key' }}
-              </button>
-            </div>
-
-            <div v-if="showApiConfig" class="bg-goblin-dark p-4 rounded-lg border border-goblin-brown">
-              <div class="space-y-4">
-                <h3 class="text-lg font-goblin text-goblin-green">
-                  Configuração da API OpenAI
-                </h3>
-                <p class="text-sm">
-                  Para gerar imagens dos goblins, você precisa de uma chave de API da OpenAI.
-                  <a href="https://platform.openai.com/api-keys" target="_blank" class="text-goblin-green underline">
-                    Obtenha uma aqui
-                  </a>.
-                </p>
-                <div class="space-y-4">
-                  <input
-                    v-model="apiKey"
-                    type="password"
-                    placeholder="Insira sua chave de API da OpenAI"
-                    class="w-full p-2 rounded bg-goblin-gray text-white"
-                  >
-                  <div class="flex justify-end">
-                    <button class="bg-goblin-green hover:bg-goblin-brown px-3 py-1 rounded" @click="saveApiKey">
-                      Salvar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <GoblinImage
-              :goblin
-              :api-key="apiKey"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="space-y-4">
-        <div class="flex justify-between">
-          <h2 class="text-2xl font-bold font-goblin text-goblin-green">
+    <!-- THE CARD -->
+    <div
+      ref="cardElement"
+      class="goblin-card relative transition-transform duration-100 ease-out overflow-hidden"
+      :style="cardStyle"
+    >
+      <div class="card-content p-12 h-full flex flex-col gap-4">
+        <!-- Header: Name -->
+        <div class="text-center border-b-2 border-goblin-brown pb-2">
+          <h2 class="text-3xl font-goblin text-ink tracking-widest uppercase">
             {{ goblin.name }}
           </h2>
-
-          <div class="flex gap-2">
-            <button
-              class="w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors"
-              title="Adicionar à coleção"
-              @click="gameStore.addPlayer(goblin.seed ?? '')"
-            >
-              <span class="material-icons">add_to_photos</span>
-            </button>
-
-            <button
-              class="w-8 h-8 flex items-center justify-center bg-goblin-brown text-white rounded-full hover:bg-goblin-green transition-colors"
-              title="Compartilhar ficha"
-              @click="shareGoblin"
-            >
-              <span class="material-icons">share</span>
-            </button>
-          </div>
         </div>
 
-        <div class="space-y-2">
-          <div class="flex gap-2">
-            <span class="font-semibold text-goblin-brown">Ocupação:</span>
-            <span class="text-goblin-dark font-medium">{{ goblin.occupation }}</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="font-semibold text-goblin-brown">Descritor:</span>
-            <span class="text-goblin-dark font-medium">{{ goblin.describer }}</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="font-semibold text-goblin-brown">Técnica:</span>
-            <div class="text-goblin-dark space-y-1">
-              <div class="font-bold text-goblin-green">
-                {{ goblin.technique.title }}
-              </div>
-              <div class="font-medium leading-snug">
-                {{ goblin.technique.description }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <!-- Image Area -->
+        <!-- <div class="card-image-area relative bg-goblin-dark bg-opacity-10 rounded-lg border-2 border-goblin-brown overflow-hidden min-h-[200px]" /> -->
 
-      <div class="grid gap-4 grid-cols-1 md:grid-cols-3">
-        <div class="space-y-4">
-          <h3 class="text-xl font-goblin text-goblin-green">
-            Características Físicas
-          </h3>
-          <div class="space-y-2">
-            <div class="flex gap-2">
-              <span class="font-semibold text-goblin-brown">Característica Distinta:</span>
-              <span class="text-goblin-dark font-medium">{{ goblin.physicalAttributes.trait }}</span>
+        <!-- Occupation & Stats Grid -->
+        <div class="grid grid-cols-2 gap-4 border-b-2 border-goblin-brown pb-4">
+          <div class="flex flex-col justify-center">
+            <span class="font-goblin text-xs text-goblin-brown uppercase tracking-wider">Classe</span>
+            <span class="font-parchment text-xl text-ink font-bold leading-tight">{{ goblin.occupation }}</span>
+            <span class="text-xs italic text-goblin-gray mt-1">{{ goblin.describer }}</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-sm border-l-2 border-goblin-brown pl-4">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-goblin-brown">CMB:</span>
+              <span class="font-goblin text-ink">{{ goblin.attributes.combate }}</span>
             </div>
-            <div class="flex gap-2">
-              <span class="font-semibold text-goblin-brown">Altura:</span>
-              <span class="text-goblin-dark font-medium">{{ goblin.physicalAttributes.height }}</span>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-goblin-brown">HAB:</span>
+              <span class="font-goblin text-ink">{{ goblin.attributes.habilidade }}</span>
             </div>
-            <div class="flex gap-2">
-              <span class="font-semibold text-goblin-brown">Peso:</span>
-              <span class="text-goblin-dark font-medium">{{ goblin.physicalAttributes.weight }}</span>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-goblin-brown">NOÇ:</span>
+              <span class="font-goblin text-ink">{{ goblin.attributes.noção }}</span>
             </div>
-            <div class="flex gap-2">
-              <span class="font-semibold text-goblin-brown">Cor da Pele:</span>
-              <span class="text-goblin-dark font-medium">{{ goblin.physicalAttributes.skinColor }}</span>
-            </div>
-            <div class="flex gap-2">
-              <span class="font-semibold text-goblin-brown">Cor dos Olhos:</span>
-              <span class="text-goblin-dark font-medium">{{ goblin.physicalAttributes.eyeColor }}</span>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-goblin-brown">VIT:</span>
+              <span class="font-goblin text-ink">{{ goblin.attributes.vitalidade }}</span>
             </div>
           </div>
         </div>
 
-        <div class="space-y-4">
-          <div class="flex justify-between items-center">
-            <h3 class="text-xl font-goblin text-goblin-green">
-              Atributos
-            </h3>
-          </div>
-
-          <div class="space-y-2">
-            <div class="flex gap-2 items-baseline">
-              <span class="font-semibold text-goblin-brown">Combate:</span>
-              <span class="text-lg font-bold text-goblin-dark">{{ goblin.attributes.combate }}</span>
-            </div>
-
-            <div class="flex gap-2 items-baseline">
-              <span class="font-semibold text-goblin-brown">Habilidade:</span>
-              <span class="text-lg font-bold text-goblin-dark">{{ goblin.attributes.habilidade }}</span>
-            </div>
-
-            <div class="flex gap-2 items-baseline">
-              <span class="font-semibold text-goblin-brown">Noção:</span>
-              <span class="text-lg font-bold text-goblin-dark">{{ goblin.attributes.noção }}</span>
-            </div>
-
-            <div class="flex gap-2 items-baseline">
-              <span class="font-semibold text-goblin-brown">Vitalidade:</span>
-              <span class="text-lg font-bold text-goblin-dark">{{ goblin.attributes.vitalidade }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <h3 class="text-xl font-goblin text-goblin-green">
+        <!-- Equipment -->
+        <div class="flex flex-col gap-2">
+          <h3 class="font-goblin text-sm text-goblin-brown uppercase border-b border-goblin-brown border-opacity-30">
             Equipamento
           </h3>
-          <div class="space-y-2">
-            <div class="flex gap-2">
-              <span class="font-semibold text-goblin-brown">Arma:</span>
-              <div class="flex flex-col">
-                <span class="text-goblin-dark font-medium">{{ goblin.equipment.weapon }}</span>
-                <span v-if="goblin.equipment.weaponDetails" class="text-xs text-goblin-dark opacity-80 italic tracking-wide mt-1 ml-1">
-                  {{ goblin.equipment.weaponDetails.uso }}, {{ goblin.equipment.weaponDetails.ataque }}, Bônus: {{ goblin.equipment.weaponDetails.bônus }}
-                </span>
-              </div>
+          <div class="flex items-start gap-3">
+            <!-- Placeholder Icon for weapon -->
+            <div class="w-12 h-12 bg-goblin-brown bg-opacity-20 rounded flex items-center justify-center flex-shrink-0">
+              <component :is="getWeaponIcon" v-if="getWeaponIcon" class="text-goblin-brown text-2xl" />
+              <span v-else class="material-icons text-goblin-brown text-2xl">swords</span>
             </div>
-            <div class="flex gap-2">
-              <span class="font-semibold text-goblin-brown">Proteção:</span>
-              <div class="flex flex-col">
-                <span class="text-goblin-dark font-medium">{{ goblin.equipment.armor }}</span>
-                <span v-if="goblin.equipment.armorDetails" class="text-xs text-goblin-dark opacity-80 italic tracking-wide mt-1 ml-1">
-                  {{ goblin.equipment.armorDetails.uso }}, Durabilidade: {{ goblin.equipment.armorDetails.durabilidade }}
-                </span>
-              </div>
+            <div class="flex flex-col">
+              <span class="font-parchment font-bold text-ink">{{ goblin.equipment.weapon }}</span>
+              <span v-if="goblin.equipment.weaponDetails" class="text-xs text-goblin-gray italic">
+                {{ goblin.equipment.weaponDetails.ataque }} ({{ goblin.equipment.weaponDetails.uso }})
+              </span>
             </div>
-            <div class="flex gap-2">
-              <span class="font-semibold text-goblin-brown">Itens:</span>
-              <ul class="list-disc list-inside text-goblin-dark space-y-1">
-                <li v-for="item in goblin.equipment.items" :key="item" class="font-medium">
-                  {{ item }}
-                </li>
-              </ul>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-12 h-12 bg-goblin-brown bg-opacity-20 rounded flex items-center justify-center flex-shrink-0">
+              <component :is="getArmorIcon" v-if="getArmorIcon" class="text-goblin-brown text-2xl" />
+              <span v-else class="material-icons text-goblin-brown text-2xl">shield</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-parchment font-bold text-ink">{{ goblin.equipment.armor }}</span>
+              <span v-if="goblin.equipment.armorDetails" class="text-xs text-goblin-gray italic">
+                Dur: {{ goblin.equipment.armorDetails.durabilidade }}
+              </span>
             </div>
           </div>
         </div>
 
-        <div class="space-y-4">
-          <h3 class="text-xl font-goblin text-goblin-green">
-            Personalidade
+        <!-- Special Ability -->
+        <div class="mt-auto bg-goblin-brown bg-opacity-10 p-3 rounded border border-goblin-brown border-opacity-30">
+          <h3 class="font-goblin text-sm text-goblin-green uppercase mb-1">
+            Habilidade Especial: {{ goblin.technique.title }}
           </h3>
-          <ul class="list-disc list-inside text-goblin-dark space-y-1">
-            <li v-for="trait in goblin.personality" :key="trait" class="font-medium">
-              {{ trait }}
-            </li>
-          </ul>
-        </div>
-
-        <div v-if="goblin.occupation === 'Bruxo' && goblin.spells && goblin.spells.length > 0" class="space-y-4">
-          <h3 class="text-xl font-goblin text-goblin-green">
-            Magias
-          </h3>
-          <ul class="list-disc list-inside text-goblin-dark space-y-1">
-            <li v-for="spell in goblin.spells" :key="spell" class="font-medium">
-              {{ spell }}
-            </li>
-          </ul>
-        </div>
-
-        <div v-if="goblin.luckOrCurse" class="space-y-4">
-          <h3 class="text-xl font-goblin text-goblin-green">
-            {{ goblin.luckOrCurse.type === 'luck' ? 'Sorte' : 'Maldição' }}
-          </h3>
-          <div :class="{ 'text-green-600 font-medium': goblin.luckOrCurse.type === 'luck', 'text-red-600 font-medium': goblin.luckOrCurse.type === 'curse' }">
-            {{ goblin.luckOrCurse.description }}
-          </div>
+          <p class="font-parchment text-sm text-ink leading-snug">
+            {{ goblin.technique.description }}
+          </p>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.perspective-container {
+  perspective: 1000px;
+}
+
+.goblin-card {
+  /* Aspect ratio of a typical playing card ~ 2.5 : 3.5 or 63x88mm */
+  aspect-ratio: 2.5 / 3.5;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+}
+
+/* Smooth out the movement just a bit */
+.goblin-card {
+  will-change: transform;
+}
+
+/* Adjust layout for very small screens if necessary */
+@media (max-width: 480px) {
+  .goblin-card {
+    aspect-ratio: auto;
+    min-height: 600px;
+  }
+}
+
+/* Deep styling for GoblinImage component to fit the card theme */
+:deep(.goblin-image) {
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important; /* Disable the rotation in GoblinImage */
+  border-radius: 0.5rem;
+  filter: sepia(0.3) contrast(1.1); /* Give it a slight vintage look */
+}
+
+:deep(.image-controls) {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+:deep(.card-image-area:hover .image-controls) {
+  opacity: 1;
+}
+
+:deep(.no-image-container) {
+  background: transparent !important;
+  border: none !important;
+  min-height: 200px !important;
+}
+
+:deep(.goblin-button) {
+  font-family: 'Cinzel', serif;
+  background-color: #4a6741 !important;
+  color: #f5e8c9 !important;
+  border: 2px solid #2c3e2e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+</style>
