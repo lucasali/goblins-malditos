@@ -8,8 +8,8 @@ import VueDevTools from 'vite-plugin-vue-devtools'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    Vue(),
-    VueDevTools(),
+    Vue() as any,
+    VueDevTools() as any,
     Icons({
       autoInstall: true,
     }),

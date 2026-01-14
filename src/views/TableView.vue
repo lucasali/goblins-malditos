@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { Player } from '../types/table'
+import { useConvexMutation, useConvexQuery } from 'convex-vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import JoinTableModal from '../components/JoinTableModal.vue'
 import PlayerGrid from '../components/PlayerGrid.vue'
 import TableChat from '../components/TableChat.vue'
 import TableDiceRoller from '../components/TableDiceRoller.vue'
-import { api, useConvexMutation, useConvexQuery } from '../composables/useConvex'
 import { useSession } from '../composables/useSession'
+import { api } from '../convex/api'
 import { generateGoblin } from '../services/goblinGenerator'
 
 const route = useRoute()
@@ -20,38 +21,21 @@ const errorMessage = ref('')
 const hasJoined = ref(false)
 const currentPlayerId = ref('')
 
-const tableData = ref<any>(null)
-const tablePending = ref(false)
-if (convexEnabled) {
-  const tableQuery = useConvexQuery(
-    api.tables.getTableBySlug,
-    computed(() => ({ slug: slug.value })),
-  )
-  tableData.value = tableQuery.data
-  tablePending.value = tableQuery.isPending
-}
-const table = computed(() => (tableData.value || null) as { _id: string } | null)
+const { data: tableData, isPending: tablePending } = useConvexQuery(
+  api.tables.getTableBySlug,
+  computed(() => ({ slug: slug.value })),
+)
+const table = computed(() => (tableData.value ?? null) as { _id: string } | null)
 const tableId = computed(() => table.value?._id || '')
 
-const playersArgs = computed(() => ({ tableId: tableId.value || undefined }))
-const messagesArgs = computed(() => ({ tableId: tableId.value || undefined }))
-const rollsArgs = computed(() => ({ tableId: tableId.value || undefined }))
+const queryArgs = computed(() => ({ tableId: tableId.value || undefined }))
+const { data: playersData } = useConvexQuery(api.players.getTablePlayers, queryArgs)
+const { data: messagesData } = useConvexQuery(api.messages.getMessages, queryArgs)
+const { data: rollsData } = useConvexQuery(api.diceRolls.getDiceRolls, queryArgs)
 
-const playersData = ref<any[]>([])
-const messagesData = ref<any[]>([])
-const rollsData = ref<any[]>([])
-if (convexEnabled) {
-  const playersQuery = useConvexQuery(api.players.getTablePlayers, playersArgs)
-  const messagesQuery = useConvexQuery(api.messages.getMessages, messagesArgs)
-  const rollsQuery = useConvexQuery(api.diceRolls.getDiceRolls, rollsArgs)
-  playersData.value = playersQuery.data
-  messagesData.value = messagesQuery.data
-  rollsData.value = rollsQuery.data
-}
-
-const players = computed(() => (playersData.value || []) as Player[])
-const messages = computed(() => messagesData.value || [])
-const rolls = computed(() => rollsData.value || [])
+const players = computed(() => (playersData.value ?? []) as Player[])
+const messages = computed(() => messagesData.value ?? [])
+const rolls = computed(() => rollsData.value ?? [])
 
 const currentPlayer = computed(() => {
   return (
@@ -63,21 +47,12 @@ const currentPlayer = computed(() => {
 
 const isMaster = computed(() => currentPlayer.value?.isMaster ?? false)
 
-let joinTable = async () => null
-let leaveTable = async () => null
-let updateGoblin = async () => null
-let kickPlayer = async () => null
-let sendMessage = async () => null
-let rollDice = async () => null
-
-if (convexEnabled) {
-  joinTable = useConvexMutation(api.players.joinTable).mutate
-  leaveTable = useConvexMutation(api.players.leaveTable).mutate
-  updateGoblin = useConvexMutation(api.players.updateGoblin).mutate
-  kickPlayer = useConvexMutation(api.players.kickPlayer).mutate
-  sendMessage = useConvexMutation(api.messages.sendMessage).mutate
-  rollDice = useConvexMutation(api.diceRolls.rollDice).mutate
-}
+const { mutate: joinTable } = useConvexMutation(api.players.joinTable)
+const { mutate: leaveTable } = useConvexMutation(api.players.leaveTable)
+const { mutate: updateGoblin } = useConvexMutation(api.players.updateGoblin)
+const { mutate: kickPlayer } = useConvexMutation(api.players.kickPlayer)
+const { mutate: sendMessage } = useConvexMutation(api.messages.sendMessage)
+const { mutate: rollDice } = useConvexMutation(api.diceRolls.rollDice)
 
 async function ensureJoin() {
   if (hasJoined.value || !nickname.value || !slug.value) {
@@ -89,7 +64,7 @@ async function ensureJoin() {
   }
 
   try {
-    const { result } = await joinTable({
+    const result = await joinTable({
       slug: slug.value,
       sessionId: sessionId.value,
       nickname: nickname.value,

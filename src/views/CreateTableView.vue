@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { useConvexMutation } from 'convex-vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { api, useConvexMutation } from '../composables/useConvex'
 import { useSession } from '../composables/useSession'
+import { api } from '../convex/api'
 
 const router = useRouter()
 const slug = ref(generateSlug())
@@ -17,7 +18,9 @@ let mutate: ((args: { slug: string, sessionId: string, nickname: string }) => Pr
 if (convexEnabled) {
   const mutation = useConvexMutation(api.tables.createTable)
   mutate = mutation.mutate
-  isPending.value = mutation.isPending
+  watch(() => mutation.isPending.value, (val) => {
+    isPending.value = val
+  }, { immediate: true })
 }
 
 const slugPreview = computed(() => slug.value.trim().toLowerCase())

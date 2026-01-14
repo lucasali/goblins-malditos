@@ -12,7 +12,7 @@ if (!convexUrl) {
   console.warn('VITE_CONVEX_URL não está configurado. A mesa online ficará indisponível.')
 }
 
-app.use(pinia)
+app.use(pinia as any)
 app.use(router)
 if (convexUrl) {
   app.use(convexVue, { url: convexUrl })
