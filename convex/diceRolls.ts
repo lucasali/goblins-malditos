@@ -1,5 +1,5 @@
-import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
+import { mutation, query } from './_generated/server'
 
 const MAX_ROLLS = 50
 
@@ -25,7 +25,7 @@ export const rollDice = mutation({
   handler: async (ctx, args) => {
     const player = await ctx.db
       .query('players')
-      .withIndex('by_table_session', (q) => q.eq('tableId', args.tableId).eq('sessionId', args.sessionId))
+      .withIndex('by_table_session', q => q.eq('tableId', args.tableId).eq('sessionId', args.sessionId))
       .unique()
 
     if (!player) {
@@ -50,7 +50,7 @@ export const rollDice = mutation({
 
     const allRolls = await ctx.db
       .query('diceRolls')
-      .withIndex('by_table', (q) => q.eq('tableId', args.tableId))
+      .withIndex('by_table', q => q.eq('tableId', args.tableId))
       .order('asc')
       .collect()
 
@@ -74,7 +74,7 @@ export const getDiceRolls = query({
     const tableId = args.tableId
     return await ctx.db
       .query('diceRolls')
-      .withIndex('by_table', (q) => q.eq('tableId', tableId))
+      .withIndex('by_table', q => q.eq('tableId', tableId))
       .order('asc')
       .collect()
   },

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { DiceRoll } from '../types/table'
 
-const props = defineProps<{
+defineProps<{
   rolls: DiceRoll[]
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'roll', dice: string): void
 }>()
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
 import type { TableMessage } from '../types/table'
+import { nextTick, ref, watch } from 'vue'
 
 const props = defineProps<{
   messages: TableMessage[]

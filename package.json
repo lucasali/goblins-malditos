@@ -13,7 +13,9 @@
   "dependencies": {
     "convex": "^1.31.4",
     "convex-vue": "^0.1.5",
+    "lint-staged": "^16.2.7",
     "pinia": "^3.0.1",
+    "simple-git-hooks": "^2.13.1",
     "vite": "^7.3.1",
     "vue": "^3.5.26",
     "vue-router": "^4.5.0"
@@ -32,5 +34,11 @@
     "unplugin-vue-components": "^28.4.1",
     "vite-plugin-vue-devtools": "^7.7.2",
     "vue-tsc": "^2.2.4"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bun lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
   }
 }

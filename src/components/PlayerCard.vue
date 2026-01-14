@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { Player } from '../types/table'
+import { computed } from 'vue'
 import { generateGoblinFromSeed } from '../services/goblinGenerator'
 
 const props = defineProps<{

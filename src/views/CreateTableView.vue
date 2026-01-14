@@ -11,13 +11,13 @@ const errorMessage = ref('')
 
 const { sessionId, saveNickname } = useSession(slug)
 const convexEnabled = Boolean(import.meta.env.VITE_CONVEX_URL)
-let isPending = ref(false)
+const isPending = ref(false)
 let mutate: ((args: { slug: string, sessionId: string, nickname: string }) => Promise<any>) | null = null
 
 if (convexEnabled) {
   const mutation = useConvexMutation(api.tables.createTable)
   mutate = mutation.mutate
-  isPending = mutation.isPending
+  isPending.value = mutation.isPending
 }
 
 const slugPreview = computed(() => slug.value.trim().toLowerCase())

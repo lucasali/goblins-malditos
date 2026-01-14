@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Player } from '../types/table'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import JoinTableModal from '../components/JoinTableModal.vue'
@@ -8,7 +9,6 @@ import TableDiceRoller from '../components/TableDiceRoller.vue'
 import { api, useConvexMutation, useConvexQuery } from '../composables/useConvex'
 import { useSession } from '../composables/useSession'
 import { generateGoblin } from '../services/goblinGenerator'
-import type { Player } from '../types/table'
 
 const route = useRoute()
 const slug = computed(() => String(route.params.slug || '').toLowerCase())
@@ -20,15 +20,15 @@ const errorMessage = ref('')
 const hasJoined = ref(false)
 const currentPlayerId = ref('')
 
-let tableData = ref<any>(null)
-let tablePending = ref(false)
+const tableData = ref<any>(null)
+const tablePending = ref(false)
 if (convexEnabled) {
   const tableQuery = useConvexQuery(
     api.tables.getTableBySlug,
     computed(() => ({ slug: slug.value })),
   )
-  tableData = tableQuery.data
-  tablePending = tableQuery.isPending
+  tableData.value = tableQuery.data
+  tablePending.value = tableQuery.isPending
 }
 const table = computed(() => (tableData.value || null) as { _id: string } | null)
 const tableId = computed(() => table.value?._id || '')
@@ -37,16 +37,16 @@ const playersArgs = computed(() => ({ tableId: tableId.value || undefined }))
 const messagesArgs = computed(() => ({ tableId: tableId.value || undefined }))
 const rollsArgs = computed(() => ({ tableId: tableId.value || undefined }))
 
-let playersData = ref<any[]>([])
-let messagesData = ref<any[]>([])
-let rollsData = ref<any[]>([])
+const playersData = ref<any[]>([])
+const messagesData = ref<any[]>([])
+const rollsData = ref<any[]>([])
 if (convexEnabled) {
   const playersQuery = useConvexQuery(api.players.getTablePlayers, playersArgs)
   const messagesQuery = useConvexQuery(api.messages.getMessages, messagesArgs)
   const rollsQuery = useConvexQuery(api.diceRolls.getDiceRolls, rollsArgs)
-  playersData = playersQuery.data
-  messagesData = messagesQuery.data
-  rollsData = rollsQuery.data
+  playersData.value = playersQuery.data
+  messagesData.value = messagesQuery.data
+  rollsData.value = rollsQuery.data
 }
 
 const players = computed(() => (playersData.value || []) as Player[])
@@ -55,8 +55,8 @@ const rolls = computed(() => rollsData.value || [])
 
 const currentPlayer = computed(() => {
   return (
-    players.value.find((player) => player._id === currentPlayerId.value)
-    || players.value.find((player) => player.sessionId === sessionId.value)
+    players.value.find(player => player._id === currentPlayerId.value)
+    || players.value.find(player => player.sessionId === sessionId.value)
     || null
   )
 })

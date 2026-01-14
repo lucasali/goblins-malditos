@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { Player } from '../types/table'
+import { computed } from 'vue'
 import PlayerCard from './PlayerCard.vue'
 
 const props = defineProps<{
@@ -9,7 +9,7 @@ const props = defineProps<{
   isMaster: boolean
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'generate'): void
   (e: 'kick', playerId: string): void
 }>()

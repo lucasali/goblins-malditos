@@ -1,5 +1,5 @@
-import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
+import { mutation, query } from './_generated/server'
 import { cleanupTable } from './lib/cleanup'
 
 const MAX_PLAYERS = 12
@@ -13,7 +13,7 @@ export const joinTable = mutation({
   handler: async (ctx, args) => {
     const table = await ctx.db
       .query('tables')
-      .withIndex('by_slug', (q) => q.eq('slug', args.slug))
+      .withIndex('by_slug', q => q.eq('slug', args.slug))
       .unique()
 
     if (!table) {
@@ -22,7 +22,7 @@ export const joinTable = mutation({
 
     const existingPlayer = await ctx.db
       .query('players')
-      .withIndex('by_table_session', (q) => q.eq('tableId', table._id).eq('sessionId', args.sessionId))
+      .withIndex('by_table_session', q => q.eq('tableId', table._id).eq('sessionId', args.sessionId))
       .unique()
 
     if (existingPlayer) {
@@ -35,7 +35,7 @@ export const joinTable = mutation({
 
     const players = await ctx.db
       .query('players')
-      .withIndex('by_table', (q) => q.eq('tableId', table._id))
+      .withIndex('by_table', q => q.eq('tableId', table._id))
       .collect()
 
     if (players.length >= MAX_PLAYERS) {
@@ -63,7 +63,7 @@ export const leaveTable = mutation({
   handler: async (ctx, args) => {
     const player = await ctx.db
       .query('players')
-      .withIndex('by_table_session', (q) => q.eq('tableId', args.tableId).eq('sessionId', args.sessionId))
+      .withIndex('by_table_session', q => q.eq('tableId', args.tableId).eq('sessionId', args.sessionId))
       .unique()
 
     if (!player) {
@@ -74,7 +74,7 @@ export const leaveTable = mutation({
 
     const remaining = await ctx.db
       .query('players')
-      .withIndex('by_table', (q) => q.eq('tableId', args.tableId))
+      .withIndex('by_table', q => q.eq('tableId', args.tableId))
       .collect()
 
     if (remaining.length === 0) {
@@ -95,7 +95,7 @@ export const updateGoblin = mutation({
   handler: async (ctx, args) => {
     const player = await ctx.db
       .query('players')
-      .withIndex('by_table_session', (q) => q.eq('tableId', args.tableId).eq('sessionId', args.sessionId))
+      .withIndex('by_table_session', q => q.eq('tableId', args.tableId).eq('sessionId', args.sessionId))
       .unique()
 
     if (!player) {
@@ -132,7 +132,7 @@ export const kickPlayer = mutation({
 
     const remaining = await ctx.db
       .query('players')
-      .withIndex('by_table', (q) => q.eq('tableId', args.tableId))
+      .withIndex('by_table', q => q.eq('tableId', args.tableId))
       .collect()
 
     if (remaining.length === 0) {
@@ -153,7 +153,7 @@ export const getTablePlayers = query({
     const tableId = args.tableId
     return await ctx.db
       .query('players')
-      .withIndex('by_table', (q) => q.eq('tableId', tableId))
+      .withIndex('by_table', q => q.eq('tableId', tableId))
       .collect()
   },
 })

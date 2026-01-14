@@ -1,5 +1,5 @@
-import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
+import { mutation, query } from './_generated/server'
 import { cleanupTable } from './lib/cleanup'
 
 export const createTable = mutation({
@@ -11,7 +11,7 @@ export const createTable = mutation({
   handler: async (ctx, args) => {
     const existing = await ctx.db
       .query('tables')
-      .withIndex('by_slug', (q) => q.eq('slug', args.slug))
+      .withIndex('by_slug', q => q.eq('slug', args.slug))
       .unique()
 
     if (existing) {
@@ -42,7 +42,7 @@ export const getTableBySlug = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query('tables')
-      .withIndex('by_slug', (q) => q.eq('slug', args.slug))
+      .withIndex('by_slug', q => q.eq('slug', args.slug))
       .unique()
   },
 })
