@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Goblin } from '../types/goblin'
 import { onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import GoblinCard from '../components/GoblinCard.vue'
 import { generateGoblin, generateGoblinFromSeed } from '../services/goblinGenerator'
 
@@ -87,6 +87,9 @@ function loadGoblinFromSeed(seed: string) {
 
 <template>
   <div class="flex flex-col items-center gap-4">
+    <RouterLink to="/criar-mesa" class="goblin-button">
+      Criar mesa online
+    </RouterLink>
     <GoblinButton @click="generateNewGoblin">
       <i-game-icons-goblin width="24" height="24" />
     </GoblinButton>

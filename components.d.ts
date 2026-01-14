@@ -15,9 +15,14 @@ declare module 'vue' {
     GoblinCard: typeof import('./src/components/GoblinCard.vue')['default']
     GoblinImage: typeof import('./src/components/GoblinImage.vue')['default']
     IGameIconsGoblin: typeof import('~icons/game-icons/goblin')['default']
+    JoinTableModal: typeof import('./src/components/JoinTableModal.vue')['default']
+    PlayerCard: typeof import('./src/components/PlayerCard.vue')['default']
+    PlayerGrid: typeof import('./src/components/PlayerGrid.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/Sidebar.vue')['default']
     SidebarToggle: typeof import('./src/components/SidebarToggle.vue')['default']
+    TableChat: typeof import('./src/components/TableChat.vue')['default']
+    TableDiceRoller: typeof import('./src/components/TableDiceRoller.vue')['default']
   }
 }
