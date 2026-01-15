@@ -17,6 +17,25 @@ const slug = computed(() => String(route.params.slug || '').toLowerCase())
 
 const { sessionId, nickname, saveNickname } = useSession(slug)
 const convexEnabled = Boolean(import.meta.env.VITE_CONVEX_URL)
+const convexUrl = import.meta.env.VITE_CONVEX_URL
+
+function getConvexHttpBase(url?: string) {
+  if (!url) {
+    return ''
+  }
+  try {
+    const parsed = new URL(url)
+    if (parsed.hostname.endsWith('.convex.cloud')) {
+      parsed.hostname = parsed.hostname.replace('.convex.cloud', '.convex.site')
+    }
+    return parsed.origin
+  }
+  catch {
+    return ''
+  }
+}
+
+const convexHttpBase = computed(() => getConvexHttpBase(convexUrl))
 
 const errorMessage = ref('')
 const hasJoined = ref(false)
@@ -162,9 +181,38 @@ function handleUnload() {
   })
 }
 
-onMounted(() => window.addEventListener('beforeunload', handleUnload))
+function handlePageHide() {
+  if (!tableId.value || !sessionId.value || !convexHttpBase.value) {
+    return
+  }
+  const url = `${convexHttpBase.value}/leave`
+  const payload = JSON.stringify({
+    tableId: tableId.value,
+    sessionId: sessionId.value,
+  })
+
+  if (navigator.sendBeacon) {
+    const ok = navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }))
+    if (ok) {
+      return
+    }
+  }
+
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: payload,
+    keepalive: true,
+  }).catch(() => {})
+}
+
+onMounted(() => {
+  window.addEventListener('beforeunload', handleUnload)
+  window.addEventListener('pagehide', handlePageHide)
+})
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', handleUnload)
+  window.removeEventListener('pagehide', handlePageHide)
   handleUnload()
 })
 </script>
