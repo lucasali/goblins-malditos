@@ -10,10 +10,12 @@ declare module 'vue' {
   export interface GlobalComponents {
     GoblinButton: typeof import('./src/components/GoblinButton.vue')['default']
     GoblinCard: typeof import('./src/components/GoblinCard.vue')['default']
+    GoblinCarousel: typeof import('./src/components/GoblinCarousel.vue')['default']
     IGameIconsGoblin: typeof import('~icons/game-icons/goblin')['default']
     JoinTableModal: typeof import('./src/components/JoinTableModal.vue')['default']
     PlayerCard: typeof import('./src/components/PlayerCard.vue')['default']
     PlayerGrid: typeof import('./src/components/PlayerGrid.vue')['default']
+    PlayerSelector: typeof import('./src/components/PlayerSelector.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TableChat: typeof import('./src/components/TableChat.vue')['default']

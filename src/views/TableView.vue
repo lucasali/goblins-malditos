@@ -3,8 +3,9 @@ import type { Player } from '../types/table'
 import { useConvexMutation, useConvexQuery } from 'convex-vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import GoblinCarousel from '../components/GoblinCarousel.vue'
 import JoinTableModal from '../components/JoinTableModal.vue'
-import PlayerGrid from '../components/PlayerGrid.vue'
+import PlayerSelector from '../components/PlayerSelector.vue'
 import TableChat from '../components/TableChat.vue'
 import TableDiceRoller from '../components/TableDiceRoller.vue'
 import { useSession } from '../composables/useSession'
@@ -45,6 +46,12 @@ const currentPlayer = computed(() => {
   )
 })
 
+const orderedPlayers = computed(() => {
+  return [...players.value].sort((a, b) => a.joinedAt - b.joinedAt)
+})
+
+const selectedPlayerId = ref('')
+
 const isMaster = computed(() => currentPlayer.value?.isMaster ?? false)
 
 const { mutate: joinTable } = useConvexMutation(api.players.joinTable)
@@ -78,6 +85,18 @@ async function ensureJoin() {
 }
 
 watch([nickname, slug], ensureJoin, { immediate: true })
+
+watch([orderedPlayers, currentPlayer, currentPlayerId], () => {
+  if (!orderedPlayers.value.length) {
+    selectedPlayerId.value = ''
+    return
+  }
+  const selectedExists = orderedPlayers.value.some(player => player._id === selectedPlayerId.value)
+  if (!selectedExists) {
+    const preferred = currentPlayer.value || orderedPlayers.value[0]
+    selectedPlayerId.value = preferred?._id || ''
+  }
+}, { immediate: true })
 
 async function handleGenerateGoblin() {
   if (!tableId.value) {
@@ -129,6 +148,10 @@ function handleSubmitNickname(newNickname: string) {
   ensureJoin()
 }
 
+function handleSelectPlayer(playerId: string) {
+  selectedPlayerId.value = playerId
+}
+
 function handleUnload() {
   if (!tableId.value) {
     return
@@ -177,17 +200,27 @@ onBeforeUnmount(() => {
     <div v-else-if="!table" class="text-goblin-gray italic">
       Mesa não encontrada.
     </div>
-    <div v-else class="grid gap-6 lg:grid-cols-[2fr_1fr]">
-      <div>
-        <PlayerGrid
+    <div v-else class="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)_320px]">
+      <div class="order-1 lg:order-none">
+        <PlayerSelector
           :players="players"
+          :selected-player-id="selectedPlayerId"
+          :current-player-id="currentPlayer?._id || ''"
+          @select="handleSelectPlayer"
+        />
+      </div>
+      <div class="order-2 lg:order-none">
+        <GoblinCarousel
+          :players="players"
+          :selected-player-id="selectedPlayerId"
           :current-player-id="currentPlayer?._id || ''"
           :is-master="isMaster"
+          @select="handleSelectPlayer"
           @generate="handleGenerateGoblin"
           @kick="handleKick"
         />
       </div>
-      <div class="flex flex-col gap-4">
+      <div class="order-3 lg:order-none flex flex-col gap-4">
         <TableChat :messages="messages" @send="handleSendMessage" />
         <TableDiceRoller :rolls="rolls" @roll="handleRollDice" />
       </div>
